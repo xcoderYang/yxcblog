@@ -20,7 +20,7 @@ type User struct{
 	LastLogin time.Time
 }
 
-func initUser(r *gin.Engine){
+func initUser(r *gin.RouterGroup){
 	//dbPool := db.DB
 	//var usr User
 	//r.GET("/setcookie", func(ctx *gin.Context){

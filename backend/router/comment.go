@@ -5,11 +5,13 @@ import (
 	_ "yxcblog/database"
 )
 
-func initComment(r *gin.Engine){
+func initComment(r *gin.RouterGroup){
 	v1 := r.Group("/comment")
 	{
-		v1.GET("/list", func(ctx *gin.Context) {
-
-		})
+		v1.GET("/list", getComment)
 	}
+}
+
+func getComment(ctx *gin.Context){
+
 }
