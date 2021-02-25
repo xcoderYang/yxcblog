@@ -11,7 +11,7 @@ var DB *sql.DB
 
 
 func init(){
-	sqlDBPool, err := sql.Open("mysql", "root:yangxuechao123@/medicalsystem?charset=utf8&parseTime=True&loc=Local")
+	sqlDBPool, err := sql.Open("mysql", "root:yangxuechao321@/medicalsystem?charset=utf8&parseTime=True&loc=Local")
 	if err!=nil{
 		log.Println(err)
 		return

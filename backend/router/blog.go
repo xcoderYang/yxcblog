@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
