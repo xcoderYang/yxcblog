@@ -1,6 +1,5 @@
 <template>
-    <div>
-        this is test
+    <div class="wrap">
     </div>
 </template>
 
@@ -8,8 +7,16 @@
 export default{
     name: 'index',
     data(){
+        return {
 
+        }
     }
 }
 </script>
-<style></style>
+<style scoped lang="stylus">
+    .wrap
+        height 100%
+        width 100%
+        background url("../assets/dog.jpg")
+        background-size 100% 100%
+</style>

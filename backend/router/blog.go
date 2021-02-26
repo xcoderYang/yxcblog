@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 	database "yxcblog/database"
+	"yxcblog/utils"
 )
 
 type blog struct{
@@ -46,7 +47,11 @@ func initBlog(r *gin.RouterGroup){
 }
 
 func getBlog(ctx *gin.Context) {
-	pageNum, err := strconv.Atoi(ctx.Query("pageNum"))
+	pageNumStr := ctx.Query("pageNum")
+	if pageNumStr == ""{
+		pageNumStr = "1"
+	}
+	pageNum, err := strconv.Atoi(pageNumStr)
 	if err!=nil{
 		log.Println(err)
 		return
@@ -54,7 +59,7 @@ func getBlog(ctx *gin.Context) {
 	rows, err := DB.Query("SELECT createAt, updateAt, title, content, `type`, `order`, tag, visited FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*10, pageNum*10)
 	if err != nil{
 
-		ParamsError(ctx, err)
+		utils.ParamsError(ctx, err)
 		return
 	}
 	ans := make([]gin.H, 0)
@@ -62,7 +67,7 @@ func getBlog(ctx *gin.Context) {
 		var row blog
 		err := rows.Scan(&row.CreateAt, &row.UpdateAt, &row.Title, &row.Content, &row.Type, &row.Order, &row.Tag, &row.Visited)
 		if err!=nil{
-			ParamsError(ctx, err)
+			utils.ParamsError(ctx, err)
 			return
 		}
 		ans = append(ans, gin.H{
