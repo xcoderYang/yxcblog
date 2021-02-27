@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,9 +10,8 @@ import (
 
 var DB *sql.DB
 
-
 func init(){
-	sqlDBPool, err := sql.Open("mysql", "root:yangxuechao123@/medicalsystem?charset=utf8&parseTime=True&loc=Local")
+	sqlDBPool, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", USERNAME, PASSWORD, IPADDRESS, PORT, DATABASE))
 	if err!=nil{
 		log.Println(err)
 		return
