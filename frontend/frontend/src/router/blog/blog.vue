@@ -55,5 +55,8 @@ export default {
         text-align center
         box-sizing border-box
         font-size 30px
+    .content
+        width 1000px
+        
 
 </style>
