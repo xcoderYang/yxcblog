@@ -5,9 +5,9 @@
         </section>
         <section class="bloglist">
             <ul class="blogul">
-                <li v-for="(blog,index) in lists" :key="index" @click="toBlog(blog.blogId)">
+                <li v-for="(blog,index) in lists" :key="index">
                     <span class="createTime">{{blog.createTime}}</span>
-                    <span class="title">{{blog.title}}</span>
+                    <span class="title" @click="toBlog(blog.blogId)">{{blog.title}}</span>
                     <span class="tag">
                         <span v-for="(tag,i) in blog.tags" :key="i" class="tagItem">
                             {{tag}}

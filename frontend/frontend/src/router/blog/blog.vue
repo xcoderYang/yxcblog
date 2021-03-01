@@ -1,10 +1,10 @@
 <template>
     <div class="blogWrap">
-        <section class="title">
-            abcc
+        <section class="title" @click="test">
+            {{article.title}}
         </section>
         <section class="content">
-        saksjdlksjadkl
+            {{article.content}}
         </section>    
     </div>
 </template>
@@ -12,32 +12,20 @@
 export default {
     data(){
         return {
-            lists: [{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "",
-            }]
+            article:{
+                "createTime": "now",
+                "title": "112233",
+                "content": "oneonetwotwothreethree",
+                "tag": "number",
+                "blogId": "123",
+                "lastUpdate": "last",
+            },
         }
     },
     methods: {
         test: function(){
             console.log(this.$route.params)
+            console.log(this.$showdown)
         }
     },
 }
