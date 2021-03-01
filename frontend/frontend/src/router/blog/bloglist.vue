@@ -5,7 +5,7 @@
         </section>
         <section class="bloglist">
             <ul class="blogul">
-                <li v-for="(blog,index) in lists" :key="index">
+                <li v-for="(blog,index) in lists" :key="index" @click="toBlog(blog.blogId)">
                     <span class="createTime">{{blog.createTime}}</span>
                     <span class="title">{{blog.title}}</span>
                     <span class="tag">
@@ -21,24 +21,34 @@
 </template>
 <script>
 export default {
+    methods:{
+        toBlog: function(blogId){
+            console.log(blogId)
+            this.$router.push({name:"blog", params:{blogId}})
+        }
+    },
     data(){
         return {
             lists: [{
                 "createTime": "2020/11/11",
                 "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"]
+                "tags": ["golang", "mysql", "分布式"],
+                "blogId": "111",
             },{
                 "createTime": "2020/11/11",
                 "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"]
+                "tags": ["golang", "mysql", "分布式"],
+                "blogId": "222",
             },{
                 "createTime": "2020/11/11",
                 "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"]
+                "tags": ["golang", "mysql", "分布式"],
+                "blogId": "333",
             },{
                 "createTime": "2020/11/11",
                 "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"]
+                "tags": ["golang", "mysql", "分布式"],
+                "blogId": "444",
             }]
         }
     }

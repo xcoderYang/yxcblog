@@ -2,22 +2,22 @@
 <div class="headerWrap">
     <div class="header">
         <el-col :span="11" :offset="1" class="leftbar">
-            <i class="icon mainLogo" @click="toHome"></i>
+            <i class="icon mainLogo" @click="toSomeWhere('/')"></i>
         </el-col>
         <el-col :span="12" class="rightbar">
             <el-row style="height:100%">
                 <el-col :offset="4" :span="6" class="blog linkbtn">
-                    <div class="link" @click="toBlog">
+                    <div class="link" @click="toSomeWhere('/bloglist')">
                         blog
                     </div>
                 </el-col>
                 <el-col :span="6" class="images linkbtn">
-                    <div class="link" @click="toImages">
+                    <div class="link" @click="toSomeWhere('/images')">
                         images
                     </div>
                 </el-col>
                 <el-col :span="6" class="diary linkbtn">
-                    <div class="link" @click="toDiary">
+                    <div class="link" @click="toSomeWhere('/diary')">
                         diary
                     </div>
                 </el-col>
@@ -35,21 +35,12 @@ export default {
         }
     },
     methods:{
-        toHome: function(){
-            if (this.$router.currentRoute.fullPath=="/"){
-                return
+        toSomeWhere: function(path){
+            if (this.$route.fullPath == path){
+                return 
             }
-            this.$router.push("/home")
+            this.$router.push(path)
         },
-        toBlog: function(){
-            this.$router.push("/blog")
-        },
-        toImages: function(){
-            this.$router.push("/images")
-        },
-        toDiary: function(){
-            this.$router.push("/diary")
-        }
     }
 }
 </script>
@@ -82,6 +73,7 @@ export default {
                 align-items center
                 font-size 18px
                 cursor pointer
+                user-select none
                 &:hover
                     color white
                     background-color #409EFF
