@@ -21,10 +21,10 @@ func ServerError(ctx *gin.Context, err error){
 	})
 }
 
-func SessionError(ctx *gin.Context, err error){
+func SessionError(ctx *gin.Context, str string, err error){
 	log.Println(err)
 	ctx.JSON(200, gin.H{
-		"msg": "登录信息有误",
+		"msg": str,
 		"success": false,
 	})
 }

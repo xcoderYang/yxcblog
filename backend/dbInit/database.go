@@ -1,4 +1,4 @@
-package init
+package dbInit
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"time"
-	"yxcblog/config"
+	config "yxcblog/config"
 )
 
 var DB *sql.DB

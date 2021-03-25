@@ -2,7 +2,6 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	_ "yxcblog/database"
 )
 
 func initComment(r *gin.RouterGroup){

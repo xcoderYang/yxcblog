@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 	"time"
-	"yxcblog/init"
+	"yxcblog/dbInit"
 	"yxcblog/utils"
 )
 
@@ -36,7 +36,7 @@ type Comment struct{
 	BlackList bool
 }
 
-var DB = init.DB
+var DB = dbInit.DB
 
 func initBlog(r *gin.RouterGroup){
 	v1 := r.Group("/blog")

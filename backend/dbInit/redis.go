@@ -1,8 +1,8 @@
-package init
+package dbInit
 
 import (
 	"github.com/go-redis/redis/v8"
-	"yxcblog/config"
+	config "yxcblog/config"
 )
 
 var REDIS *redis.Client

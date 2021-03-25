@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	_ "yxcblog/database"
-	_ "yxcblog/redis"
+	_ "yxcblog/config"
 	"yxcblog/router"
 )
 
