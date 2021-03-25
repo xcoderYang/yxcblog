@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "yxcblog/database"
+	_ "yxcblog/redis"
 	"yxcblog/router"
 )
 
