@@ -12,9 +12,4 @@ func LoadRouter(r *gin.Engine){
 	group.Use(middleware.CheckLogin())
 	initUser(group)
 	initBlog(group)
-	//r.GET("/ping", func(c *gin.Context){
-	//	c.JSON(200, gin.H{
-	//		"message": "pong",
-	//	})
-	//})
 }
