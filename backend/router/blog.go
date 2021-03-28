@@ -30,7 +30,7 @@ func getBlog(ctx *gin.Context) {
 		utils.ParamsError(ctx, nil)
 		return
 	}
-	ans, err := dao.ReadByPage(pageNum, 10)
+	ans, err := dao.ReadBlogByPage(pageNum, 10)
 	if err != nil{
 		utils.ServerError(ctx, nil)
 		return
@@ -47,7 +47,7 @@ func getBlogByItem(ctx *gin.Context){
 		utils.ParamsError(ctx, nil)
 		return
 	}
-	ans, err := dao.ReadByBlogId(blogId)
+	ans, err := dao.ReadBlogById(blogId)
 	if err != nil{
 		utils.ServerError(ctx, err)
 		return

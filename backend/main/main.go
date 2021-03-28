@@ -16,6 +16,7 @@ func test() gin.HandlerFunc{
 	}
 }
 
+
 func main(){
 	r := gin.Default()
 	router.LoadRouter(r)

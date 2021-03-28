@@ -43,7 +43,7 @@ func (b *Blog)Delete(){
 func (b *Blog)Update(){
 
 }
-func ReadByBlogId(blogId string)(gin.H, error){
+func ReadBlogById(blogId string)(gin.H, error){
 	DB := dbInit.DB
 	var blog Blog
 	row := DB.QueryRow("SELECT createAt, updateAt,deleteAt, title,`content`,workNum, `type`, `order`, tag, visited,blogId FROM blog WHERE blogId=?;", blogId)
@@ -65,7 +65,7 @@ func ReadByBlogId(blogId string)(gin.H, error){
 	}
 	return ans, nil
 }
-func ReadByPage(pageNum int, pageSize int)([]gin.H, error){
+func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 	DB := dbInit.DB
 	ans := make([]gin.H, 0)
 	rows, err := DB.Query("SELECT createAt, updateAt,deleteAt, title,`content`,workNum, `type`, `order`, tag, visited,blogId FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
