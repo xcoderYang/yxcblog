@@ -1,45 +1,55 @@
 <template>
-    <div class="loginWrap">
+    <div class="loginWrap" :class="status+'Size'">
         <div class="loginBox">
-            <section class="title">title</section>
-            <section v-if="status==='login'" class="loginForm">
+            <section class="title">{{status == 'login'?'登录':'注册'}}</section>
+            <section v-if="status==='login'" class="loginForm subForm" :class="statusType">
                 <el-form ref="loginForm" :model="loginForm" :rules="rules" label-width="80px" key="login">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input v-model="loginForm.username"></el-input>
+                    <el-form-item label="用户名" prop="username" class="username">
+                        <el-input v-model="loginForm.username" class="input"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input v-model="loginForm.password"></el-input>
+                    <el-form-item label="密码" prop="password" class="password">
+                        <el-input show-password v-model="loginForm.password" class="input"></el-input>
                     </el-form-item>
-                    <el-form-item label="验证码" prop="verCode" v-loading="loginForm.loginVerCodeLoading">
+                    <!-- <el-form-item label="验证码" prop="verCode" v-loading="loginForm.loginVerCodeLoading">
                         <el-input v-model="loginForm.verCode"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="loginSubmit">登录</el-button>
-                        <el-button type="primary" @click="status = 'registry'">注册</el-button>
-                    </el-form-item>
+                    </el-form-item> -->
+                    <!-- <el-form-item>
+                        <el-button type="primary" @click="loginSubmit" class="loginBtn">登录</el-button>
+                        <el-button type="primary" @click="status = 'registry'" class="cancel">注册</el-button>
+                    </el-form-item> -->
                 </el-form>
+                <section class="btnGroup">
+                    <el-button type="primary" @click="submit('login', loginForm)" class="commit">登录</el-button>
+                    <el-button type="primary" @click="tranStatus('registry')" class="cancel">注册</el-button>
+                </section>
             </section>
-            <section v-else class="registryForm">
-                <el-form ref="registryForm" :model="registryForm" :rules="rules" label-width="80px" key="registry">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input v-model="registryForm.username"></el-input>
+            <section v-else class="registryForm subForm" :class="statusType">
+                <el-form ref="registryForm" :model="registryForm" :rules="rules" label-width="150px" key="registry">
+                    <el-form-item label="用户名" prop="username" class="username">
+                        <el-input v-model="registryForm.username" class="input"></el-input>
                     </el-form-item>
-                    <el-form-item label="电子邮箱" prop="email">
-                        <el-input v-model="registryForm.email"></el-input>
+                    <el-form-item label="电子邮箱" prop="email" class="email">
+                        <el-input v-model="registryForm.email" class="input"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="password">
-                        <el-input v-model="registryForm.password"></el-input>
+                    <el-form-item label="密码" prop="password" class="password">
+                        <el-input show-password v-model="registryForm.password" class="input"></el-input>
                     </el-form-item>
-                    <el-form-item label="验证码" prop="verCode" v-loading="loginForm.registryVerCodeLoading">
+                    <el-form-item label="请再次输入密码" prop="password" class="repassword">
+                        <el-input show-password v-model="registryForm.repassword" class="input"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="验证码" prop="verCode" v-loading="loginForm.registryVerCodeLoading">
                         <el-input v-model="registryForm.verCode"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="regSubmit">注册</el-button>
-                        <el-button type="primary" @click="status = 'login'">取消</el-button>
-                    </el-form-item>
+                    </el-form-item> -->
+                    <!-- <el-form-item>
+                        <el-button type="primary" @click="regSubmit" class="registryBtn">注册</el-button>
+                        <el-button type="primary" @click="status = 'login'" class="cancel">取消</el-button>
+                    </el-form-item> -->
                 </el-form>
+                <section class="btnGroup">
+                    <el-button type="primary" @click="submit('registry', registryForm)" class="commit">注册</el-button>
+                    <el-button type="primary" @click="tranStatus('login')" class="cancel">取消</el-button>
+                </section>
             </section>
-            <section class="btnGroup">btn</section>
         </div>
     </div>
 </template>
@@ -47,19 +57,26 @@
 export default {
     name: 'Login',
     data(){
-        //  let getVerCode = (rule, value, callback)=>{
-        //      this.getVerCode().
+        // 验证码校验
+        // let verCodeCheck = (rule, value, callback)=>{
+        //     this.getVerCode().
         //      then(()=>{
         //          callback()
         //      },()=>{
         //          callback(new Error("服务器错误"))
         //      })
         // }
-        let verCodeCheck = (rule, value, callback)=>{
-            callback()
-        }
+        // let serverCheckCode = (rule,value,callback)=>{
+        //     this.serverCheckVerCode().
+        //          then(()=>{
+
+        //          },()=>{
+        //              callback(new Error(""))
+        //          })
+        // }
         return {
             status: 'login',
+            statusType: 'login',
             loginForm:{
                 username: '',
                 password: '',
@@ -70,6 +87,7 @@ export default {
                 username: '',
                 email: '',
                 password: '',
+                repassword: '',
                 verCode: '',
                 registryVerCodeLoading: false,
             },
@@ -86,10 +104,10 @@ export default {
                     {required: true, message:'请输入注册邮箱',trigger: 'blur'},
                     {type: 'email', message: '邮箱格式不正确', trigger: 'blur'},
                 ],
-                verCode:[
-                    {required: true, message:'请输入验证码',trigger: 'blur'},
-                    {validator: verCodeCheck, trigger: 'blur'}
-                ]
+                // verCode:[
+                //     {required: true, message:'请输入验证码',trigger: 'blur'},
+                //     {validator: verCodeCheck, trigger: 'blur'}
+                // ]
             }
         }
     },
@@ -97,32 +115,29 @@ export default {
         console.log(this.serverUrl)
     },
     methods:{
-        loginSubmit(){
-            this.$axios.get(this.serverUrl+"/api/login", {
-                params:this.loginForm
-            })
-            .then(()=>{
-                console.log("Yes")
-            })
-            .catch(()=>{
-                console.log("No")
-            })
-            console.log(this.$axios)
-        },
-        regSubmit(){
-            
-        },
-        getVerCode(){
-            return new Promise((resolve, reject)=>{
-                this.$axios.get(this.serverUrl+"/api/getVerCode")
-                .then((res)=>{
-                    resolve(res)
-                })
-                .catch(()=>{
-                    reject("服务器错误")
-                })
+        submit(formName, form){
+            this.$refs[formName+'Form'].validate((valid)=>{
+                if (valid){
+                    this.$emit(formName, form)
+                }
             })
         },
+        tranStatus(status){
+            this.statusType = 'noshow'
+            this.status = status
+            setTimeout(()=>{this.statusType = 'show'}, 500)
+        }
+        // getVerCode(){
+        //     return new Promise((resolve, reject)=>{
+        //         this.$axios.get(this.serverUrl+"/api/getVerCode")
+        //         .then((res)=>{
+        //             resolve(res)
+        //         })
+        //         .catch(()=>{
+        //             reject("服务器错误")
+        //         })
+        //     })
+        // },
         // serverCheckVerCode(){
         //     return new Promise((resolve, reject)=>{
 
@@ -132,6 +147,40 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.loginSize
+    width 350px
+    height 450px
+.registrySize
+    width 450px
+    height 520px
+.loginWrap
+    transition all .5s
+    padding 10px
+    border 1px solid gray
+    border-radius 10px
+    box-sizing border-box
+    .noshow
+        display none
+    .title
+        padding 10px
+        padding-bottom 15px
+        padding-left 0
+        margin-bottom 40px
+        font-size 20px
+        text-align center
+        box-sizing border-box
+        border-bottom 1px solid gray
+    .subForm
+        margin-top 20px
+        .username, .password, .email, .repassword
+            margin-bottom 40px
+        .input
+            width 220px
+    .btnGroup
+        text-align center
+        .commit
+            margin-right 30px
+
 .test
     width 100%
     height 100%

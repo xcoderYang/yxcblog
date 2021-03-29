@@ -1,6 +1,6 @@
 <template>
-    <div class="loginWrap">
-        <Login></Login>
+    <div class="bgWrap">
+        <Login class="login" @login="login" @registry="registry"></Login>
     </div>
 </template>
 <script>
@@ -14,10 +14,42 @@ export default {
         return {
             
         }
+    },
+    methods:{
+        login(data){
+            this.$router.push("/main")
+            this.$axios.get(this.serverUrl+"/api/login", {
+                params:data
+            })
+            .then(()=>{
+            })
+            .catch(()=>{
+                console.log("No")
+            })
+        },
+        registry(data){
+            this.$axios.get(this.serverUrl+"/api/login", {
+                params:data
+            })
+            .then(()=>{
+                console.log("Yes")
+            })
+            .catch(()=>{
+                console.log("No")
+            })
+        }
     }
 }
 </script>
 <style lang="stylus" scoped>
+.bgWrap
+    height 100%
+    width 100%
+    .login
+        position relative
+        top 45%
+        left 70%
+        transform translateY(-50%)
 .test
     width 100%
     height 100%
