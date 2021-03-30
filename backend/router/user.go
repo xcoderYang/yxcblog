@@ -58,12 +58,15 @@ func login(ctx *gin.Context){
 	}
 	REDIS := dbInit.REDIS
 	c := context.Background()
-	ans, err := REDIS.Set(c, username, userInfo, global.REDIS_EXPIRE_TIME).Result()
+	sessionId := utils.SessionGenerate(username)
+	ans, err := REDIS.Set(c, sessionId, userInfo, global.REDIS_EXPIRE_TIME).Result()
+
 	if err != nil{
 		utils.ServerError(ctx, err, "服务器错误")
 		return
 	}
 	log.Println(ans)
+	ctx.SetCookie("sessionId", sessionId, 3600, "/", global.DOMAIN, false, false)
 	ctx.JSON(200, gin.H{
 		"msg": "登录成功",
 		"success": true,
