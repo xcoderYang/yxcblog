@@ -12,7 +12,7 @@ import (
 var DB *sql.DB
 
 func init(){
-	sqlDBPool, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", config.MYSQL_USERNAME, config.MYSQL_PASSWORD, config.IPADDRESS, config.MYSQL_PORT, config.MYSQL_DATABASE))
+	sqlDBPool, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", config.MYSQL_USERNAME, config.MYSQL_PASSWORD, config.IPADDRESS, config.MYSQL_PORT, config.MYSQL_DATABASE))
 	if err!=nil{
 		log.Println(err)
 		return

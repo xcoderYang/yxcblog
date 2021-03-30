@@ -25,14 +25,19 @@ Vue.use(Showdown)
 Vue.use(Vuex)
 
 Vue.prototype.$showdown = Showdown
-Vue.prototype.serverUrl = "http://localhost:8080"
+Vue.prototype.serverUrl = "http://localhost:8082"
 Vue.prototype.$axios = Axios
 
-Vue.prototype.$utils = {
-    async handlePromise(promise){
-        promise.then(data=>[data, null]).catch(err=>[null, err])
-    }
-}
+// Vue.prototype.$utils = {
+//     async handlePromise(promise){
+//         promise.then(data=>[data, null]).catch(err=>[null, err])
+//     }
+// }
+
+// const router = new VueRouter({})
+// router.beforeEach((to, from, next)=>{
+  
+// })
 
 new Vue({
   render: h => h(App),

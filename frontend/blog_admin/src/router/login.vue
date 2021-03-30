@@ -18,17 +18,18 @@ export default {
     methods:{
         login(data){
             this.$router.push("/main")
-            this.$axios.get(this.serverUrl+"/api/login", {
+            this.$axios.get(this.serverUrl+"/api/user/login", {
                 params:data
             })
-            .then(()=>{
+            .then((ans)=>{
+                console.log(ans)
             })
             .catch(()=>{
                 console.log("No")
             })
         },
         registry(data){
-            this.$axios.get(this.serverUrl+"/api/login", {
+            this.$axios.get(this.serverUrl+"/api/user/registry", {
                 params:data
             })
             .then(()=>{
