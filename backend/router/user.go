@@ -70,5 +70,6 @@ func login(ctx *gin.Context){
 	ctx.JSON(200, gin.H{
 		"msg": "登录成功",
 		"success": true,
+		"data":userInfo,
 	})
 }

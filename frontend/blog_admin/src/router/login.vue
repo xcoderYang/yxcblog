@@ -1,6 +1,6 @@
 <template>
     <div class="bgWrap">
-        <Login class="login" @login="login" @registry="registry"></Login>
+        <Login class="login" @login="login" @registry="registry" :onlyLogin="false"></Login>
     </div>
 </template>
 <script>
@@ -17,12 +17,21 @@ export default {
     },
     methods:{
         login(data){
-            this.$router.push("/main")
             this.$axios.get(this.serverUrl+"/api/user/login", {
                 params:data
             })
-            .then((ans)=>{
-                console.log(ans)
+            .then((res)=>{
+                if(res.data.success){
+                    console.log(res)
+                    let cookie = document.cookie
+                    let sessionId = cookie.slice(cookie.indexOf("sessionId")).split("; ")[0].split("=")[1]
+                    let userInfo = JSON.parse(res.data.data)
+                    userInfo.sessionId = sessionId
+                    this.$store.commit("USER_LOGIN", userInfo)
+                    this.$router.push("/main")
+                }else{
+                    alert(res.data.msg)
+                }
             })
             .catch(()=>{
                 console.log("No")
@@ -49,7 +58,7 @@ export default {
     .login
         position relative
         top 45%
-        left 70%
+        left 60%
         transform translateY(-50%)
 .test
     width 100%

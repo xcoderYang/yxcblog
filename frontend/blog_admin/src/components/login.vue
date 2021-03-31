@@ -18,12 +18,12 @@
                         <el-button type="primary" @click="status = 'registry'" class="cancel">注册</el-button>
                     </el-form-item> -->
                 </el-form>
-                <section class="btnGroup">
+                <section class="btnGroup" style="margin-top:80px;">
                     <el-button type="primary" @click="submit('login', loginForm)" class="commit">登录</el-button>
-                    <el-button type="primary" @click="tranStatus('registry')" class="cancel">注册</el-button>
+                    <el-button v-if="!onlyLogin" type="primary" @click="toggleStatus('registry')" class="cancel">注册</el-button>
                 </section>
             </section>
-            <section v-else class="registryForm subForm" :class="statusType">
+            <section v-else-if="!onlyLogin" class="registryForm subForm" :class="statusType">
                 <el-form ref="registryForm" :model="registryForm" :rules="rules" label-width="150px" key="registry">
                     <el-form-item label="用户名" prop="username" class="username">
                         <el-input v-model="registryForm.username" class="input"></el-input>
@@ -47,7 +47,7 @@
                 </el-form>
                 <section class="btnGroup">
                     <el-button type="primary" @click="submit('registry', registryForm)" class="commit">注册</el-button>
-                    <el-button type="primary" @click="tranStatus('login')" class="cancel">取消</el-button>
+                    <el-button type="primary" @click="toggleStatus('login')" class="cancel">取消</el-button>
                 </section>
             </section>
         </div>
@@ -56,6 +56,7 @@
 <script>
 export default {
     name: 'Login',
+    props:['onlyLogin'],
     data(){
         // 验证码校验
         // let verCodeCheck = (rule, value, callback)=>{
@@ -122,7 +123,7 @@ export default {
                 }
             })
         },
-        tranStatus(status){
+        toggleStatus(status){
             this.statusType = 'noshow'
             this.status = status
             setTimeout(()=>{this.statusType = 'show'}, 500)
@@ -178,8 +179,8 @@ export default {
             width 220px
     .btnGroup
         text-align center
-        .commit
-            margin-right 30px
+        .cancel
+            margin-left 30px
 
 .test
     width 100%
