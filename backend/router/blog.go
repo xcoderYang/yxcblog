@@ -11,11 +11,8 @@ import (
 var DB = dbInit.DB
 
 func initBlog(r *gin.RouterGroup){
-	v1 := r.Group("/blog")
-	{
-		v1.GET("/list", getBlog)
-		v1.GET("/blogItem", getBlogByItem)
-	}
+	r.GET("/list", getBlog)
+	r.GET("/blogItem", getBlogByItem)
 }
 
 func getBlog(ctx *gin.Context) {

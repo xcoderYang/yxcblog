@@ -15,11 +15,8 @@ import (
 )
 
 func initUser(r *gin.RouterGroup){
-	v1:=r.Group("/user")
-	{
-		v1.GET("/registry", registry)
-		v1.GET("/login", login)
-	}
+	r.GET("/registry", registry)
+	r.GET("/login", login)
 }
 
 func registry(ctx *gin.Context){

@@ -22,7 +22,6 @@ export default {
             })
             .then((res)=>{
                 if(res.data.success){
-                    console.log(res)
                     let cookie = document.cookie
                     let sessionId = cookie.slice(cookie.indexOf("sessionId")).split("; ")[0].split("=")[1]
                     let userInfo = JSON.parse(res.data.data)
@@ -33,8 +32,8 @@ export default {
                     alert(res.data.msg)
                 }
             })
-            .catch(()=>{
-                console.log("No")
+            .catch((err)=>{
+                alert(err.response.data.msg)
             })
         },
         registry(data){

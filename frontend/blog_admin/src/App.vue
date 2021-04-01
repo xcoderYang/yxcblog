@@ -37,6 +37,10 @@ export default {
               userInfo.sessionId = sessionId
               this.$store.commit("USER_LOGIN", userInfo)
               this.showLoginBox = false
+              if(this.blockedNextUrl){
+                this.$router.push(this.blockedNextUrl)
+                this.blockedNextUrl = ""
+              }
           }else{
               alert(res.data.msg)
           }
@@ -48,13 +52,40 @@ export default {
   },
   data(){
     return {
-      showLoginBox: false
+      showLoginBox: false,
+      blockedNextUrl: "",
     }
   },
   mounted(){
-    setTimeout(()=>{
-      this.showLoginBox = true
-    }, 1000)
+    let that = this
+    window.that = this
+    this.$store.commit("USER_INFO_SYNC")
+    this.$axios.interceptors.response.use((response)=>{
+      return response;
+    }, (error)=>{
+      if(error.response.status === 401 && that.$route.path!="/"){
+        that.showLoginBox = true
+      }
+      return Promise.reject(error);
+    });
+    this.$router.beforeEach((to, from ,next)=>{
+      let isLogin = that.$store.state.user.userLogin
+      if(!isLogin){
+        // 从login页面跳往其他页面
+        if(from.path == "/" && to.path != "/"){
+          next("/")
+          return
+        }
+        // 其他页面之间互相跳转
+        else if(to.path != "/" && from.path!="/"){
+          // 用户登录后可继续跳转
+          that.blockedNextUrl = to.path
+          that.showLoginBox = true
+          return
+        }
+      }
+      next()
+    })
   }
 }
 </script>

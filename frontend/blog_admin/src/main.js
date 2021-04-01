@@ -27,15 +27,6 @@ Vue.prototype.$showdown = Showdown
 Vue.prototype.serverUrl = "http://localhost:8082"
 Vue.prototype.$axios = Axios
 
-// const router = new VueRouter({})
-// router.beforeEach((to, from, next)=>{
-//   let userInfo = this.$store.state.user.userInfo
-//   let userLogin = this.$store.state.user.userLogin
-//   if(userLogin){
-    
-//   }
-// })
-
 new Vue({
   render: h => h(App),
   router: RouterCfg,

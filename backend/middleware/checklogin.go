@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"yxcblog/dbInit"
-	"yxcblog/utils"
 )
 
 
@@ -33,7 +32,11 @@ func CheckLogin() gin.HandlerFunc{
 			}
 		}
 		if tag != ""{
-			utils.SessionError(ctx, err, tag)
+			ctx.JSON(401, gin.H{
+				"msg": tag,
+				"success": false,
+			})
+			//utils.SessionError(ctx, err, tag)
 			ctx.Abort()
 			return
 		}
