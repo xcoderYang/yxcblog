@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"time"
 	"yxcblog/dbInit"
 )
@@ -43,6 +44,12 @@ func (b *Blog)Delete(){
 func (b *Blog)Update(){
 
 }
+
+func CreateBlog(){}
+func CreateComment(blogId string, fatherCommentId string){
+	log.Println(blogId, fatherCommentId)
+}
+
 func ReadBlogById(blogId string)(gin.H, error){
 	DB := dbInit.DB
 	var blog Blog
@@ -92,4 +99,38 @@ func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 		})
 	}
 	return ans, nil
+}
+func ReadBlogCount()(int,error){
+	DB := dbInit.DB
+	count := 0
+	row := DB.QueryRow("SELECT COUNT(*) FROM blog")
+	err := row.Scan(&count)
+	if err != nil{
+		return -1, err
+	}else{
+		return count, err
+	}
+}
+func ReadBlogByKeyValue(key string, value string)(int,error){
+	DB := dbInit.DB
+	count := 0
+	row := DB.QueryRow("SELECT COUNT(*) FROM blog WHERE ?=?;", key, value)
+	err := row.Scan(&count)
+	if err != nil{
+		return -1, err
+	}else{
+		return count, err
+	}
+}
+func ReadCommentByBlogId(){}
+
+func UpdateBlogById(blogId string) {
+	log.Println(blogId)
+}
+
+func DeleteBlogById(blogId string){
+	log.Println(blogId)
+}
+func DeleteComment(blogId string, commentId string){
+	log.Println(blogId, commentId)
 }
