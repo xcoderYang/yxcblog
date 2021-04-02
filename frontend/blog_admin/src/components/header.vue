@@ -1,6 +1,18 @@
 <template>
     <div class="headerWrap">
-        <el-page-header @back="goback" content="abc页面"></el-page-header>
+        <el-row class="header">
+            <el-col class="logo" :span="6">asdf</el-col>
+            <el-col class="gap" :span="10">asdf</el-col>
+            <el-col class="setting" :span="8">
+                <el-col :span="14">dd</el-col>
+                <el-col :span="5">
+                    <span>username</span>
+                </el-col>
+                <el-col :span="5">
+                    <span>退出登录</span>
+                </el-col>
+            </el-col>
+        </el-row>
     </div>
 </template>
 <script>
@@ -24,4 +36,6 @@ export default {
     width 100%
     display flex
     align-items center
+    .header
+        width 100%
 </style>

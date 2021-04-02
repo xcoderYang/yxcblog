@@ -5,10 +5,10 @@
         </div>
         <el-row>
             <el-col class="leftBarPanel" :span="3">
-                <LEFTBAR></LEFTBAR>
+                <LEFTBAR @toggle="sideToggle"></LEFTBAR>
             </el-col>
             <el-col :span="21">
-                    
+                <router-view></router-view>
             </el-col>
         </el-row>
     </div>
@@ -34,8 +34,13 @@ export default {
         logout(){
             this.$store.commit("USER_LOGOUT")
             this.$router.push("/")
-            console.log(this.$store)
-            
+        },
+        sideToggle(to){
+            if (this.$route.fullPath === "/main/"+to){
+                return
+            }else{
+                this.$router.push("/main/"+to)
+            }
         }
     }
 }

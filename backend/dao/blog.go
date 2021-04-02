@@ -28,8 +28,8 @@ type Article struct{
 
 type Comment struct{
 	ID int
-	Author int
-	Time time.Time
+	AuthorId int
+	Time string
 	ReplyTo int
 	Blog int
 	BlackList bool
