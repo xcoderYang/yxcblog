@@ -63,7 +63,7 @@ func login(ctx *gin.Context){
 		return
 	}
 	log.Println(ans)
-	ctx.SetCookie("sessionId", sessionId, 3600, "/", global.DOMAIN, false, false)
+	ctx.SetCookie("SessionId", sessionId, 3600, "/", global.DOMAIN, false, false)
 	ctx.JSON(200, gin.H{
 		"msg": "登录成功",
 		"success": true,

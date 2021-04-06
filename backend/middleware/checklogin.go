@@ -15,7 +15,7 @@ var (
 
 func CheckLogin() gin.HandlerFunc{
 	return func(ctx *gin.Context){
-		sessionId, err := ctx.Cookie("SessionID")
+		sessionId, err := ctx.Cookie("SessionId")
 		contx := context.Background()
 		tag := ""
 		if err!=nil{

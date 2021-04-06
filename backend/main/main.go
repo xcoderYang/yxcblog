@@ -16,6 +16,20 @@ func test() gin.HandlerFunc{
 	}
 }
 
+type JSONForm struct{
+	Id float64	`json:"id"`
+	Title string `json:"title"`
+	Content string `json:"content"`
+	VisitedN float64 `json:"visitedN"`
+	CommentN float64 `json:"commentN"`
+	Type []string `json:"type"`
+	Label []string `json:"label"`
+}
+
+
+type BlogForm struct{
+	blogForm JSONForm
+}
 
 func main(){
 	r := gin.Default()

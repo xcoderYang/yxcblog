@@ -65,13 +65,13 @@
                     <el-input type="textarea" :row="10" v-model="blogForm.content"></el-input>
                 </el-form-item>
                 <el-form-item label="类型">
-                    <el-checkbox-group v-model="selectedType">
-                        <el-checkbox v-for="(type, i) in typeList" :label="type" :key="i"></el-checkbox>
+                    <el-checkbox-group v-model="blogForm.type" @change="selectType">
+                        <el-checkbox v-for="(type, i) in allType" :label="type" :key="i"></el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="标签">
-                    <el-checkbox-group v-model="selectedLabel">
-                        <el-checkbox v-for="(label, i) in labelList" :label="label" :key="i"></el-checkbox>
+                    <el-checkbox-group v-model="blogForm.label" @change="selectLabel">
+                        <el-checkbox v-for="(label, i) in allLabel" :label="label" :key="i"></el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="访问量">
@@ -81,6 +81,11 @@
                     <span>{{blogForm.commentN}}</span>
                 </el-form-item>
             </el-form>
+            <section style="text-align:center">
+                <el-button type="primary" @click="blogUpdate">
+                    确定修改
+                </el-button>
+            </section>
         </div>
         </el-dialog>
     </div>
@@ -93,21 +98,32 @@ export default {
                 id:0,
                 title: "test",
                 content: "test",
-                type: "abc",
-                label: "cba",
+                type: ['a','b','c'],
+                label: ['C','B','A'],
                 visitedN: 100,
                 commentN: 1000,
             },{
-                id:0,
+                id:1,
                 title: "test",
                 content: "test",
-                type: "abc",
-                label: "cba",
+                type: ['a','b','c'],
+                label: ['C','B','A'],
                 visitedN: 100,
                 commentN: 1000,
             }],
             showDetail: false,
-            detailInfo: {}
+            detailInfo: {},
+            blogForm:{
+                title: 'title',
+                content: 'content',
+                visitedN: 100,
+                commentN: 1000,
+
+                type: [],
+                label: [],
+            },
+            allType: ['a','b','c','d','e','f','g'],
+            allLabel: ['A', 'B', 'C', 'D', 'E', 'F']
         }
     },
     methods:{
@@ -118,8 +134,30 @@ export default {
             return "text-align:center"
         },
         detail(index){
-            this.detailInfo = this.tableData[index]
+            let detailInfo = this.tableData[index]
+            this.detailInfo = detailInfo
             this.showDetail = true
+            Object.assign(this.blogForm, detailInfo)
+        },
+        typeChange(){
+            console.log(arguments)
+        },
+        blogUpdate(){
+            this.$axios.post("/api/blog/updateBlogById", {
+                blogForm: this.blogForm
+            })
+            .then((res)=>{
+                console.log(res)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
+        },
+        selectType(){
+            console.log(arguments)
+        },
+        selectLabel(){
+            console.log(arguments)
         }
     },
     mounted(){
