@@ -30,7 +30,6 @@ export default {
       })
       .then((res)=>{
           if(res.data.success){
-              console.log(res)
               let cookie = document.cookie
               let sessionId = cookie.slice(cookie.indexOf("sessionId")).split("; ")[0].split("=")[1]
               let userInfo = JSON.parse(res.data.data)
@@ -45,8 +44,8 @@ export default {
               alert(res.data.msg)
           }
       })
-      .catch(()=>{
-          console.log("No")
+      .catch((err)=>{
+          alert(err.response.data.msg)
       })
     }
   },
@@ -56,7 +55,9 @@ export default {
       blockedNextUrl: "",
     }
   },
-  mounted(){
+  // 这里要用 created是因为，父组件的 mounted在子组件的 mounted之后，如果在其后添加拦截，这里的拦截不会生效
+  // 而父组件的 created在子组件的 created,mounted之前，所以在这里添加拦截
+  created(){
     let that = this
     window.that = this
     this.$store.commit("USER_INFO_SYNC")
@@ -86,6 +87,8 @@ export default {
       }
       next()
     })
+  },
+  mounted(){
   }
 }
 </script>

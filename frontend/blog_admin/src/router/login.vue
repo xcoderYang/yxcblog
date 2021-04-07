@@ -33,20 +33,21 @@ export default {
                 }
             })
             .catch((err)=>{
+                console.log(err)
                 alert(err.response.data.msg)
             })
         },
-        registry(data){
-            this.$axios.get(this.serverUrl+"/api/user/registry", {
-                params:data
-            })
-            .then(()=>{
-                console.log("Yes")
-            })
-            .catch(()=>{
-                console.log("No")
-            })
-        }
+        // registry(data){
+        //     this.$axios.get(this.serverUrl+"/api/user/registry", {
+        //         params:data
+        //     })
+        //     .then(()=>{
+        //         console.log("Yes")
+        //     })
+        //     .catch(()=>{
+        //         console.log("No")
+        //     })
+        // }
     }
 }
 </script>

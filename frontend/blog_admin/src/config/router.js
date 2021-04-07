@@ -9,7 +9,7 @@ export default new VueRouter({
             path: '/', name: 'login', component: Login,
         },
         {
-            path: '/main', name: 'main', component: Main,
+            path: '/main', name: 'main', component: Main,redirect:'/main/bloglist',
             children:[{
                 path: 'bloglist',
                 component: BlogList

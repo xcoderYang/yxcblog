@@ -57,7 +57,7 @@
         :visible.sync="showDetail"
         >
         <div>
-            <el-form ref="blogForm" :model="blogForm" label-width="100px">
+            <el-form ref="blogForm" :model="blogForm" label-width="100px" v-loading="updateLoading">
                 <el-form-item label="标题">
                     <el-input v-model="blogForm.title"></el-input>
                 </el-form-item>
@@ -94,26 +94,11 @@
 export default {
     data(){
         return {
-            tableData:[{
-                id:0,
-                title: "test",
-                content: "test",
-                type: ['a','b','c'],
-                label: ['C','B','A'],
-                visitedN: 100,
-                commentN: 1000,
-            },{
-                id:1,
-                title: "test",
-                content: "test",
-                type: ['a','b','c'],
-                label: ['C','B','A'],
-                visitedN: 100,
-                commentN: 1000,
-            }],
+            tableData:[],
             showDetail: false,
             detailInfo: {},
             blogForm:{
+                blogId: '',
                 title: 'title',
                 content: 'content',
                 visitedN: 100,
@@ -123,7 +108,8 @@ export default {
                 label: [],
             },
             allType: ['a','b','c','d','e','f','g'],
-            allLabel: ['A', 'B', 'C', 'D', 'E', 'F']
+            allLabel: ['A', 'B', 'C', 'D', 'E', 'F'],
+            updateLoading: false
         }
     },
     methods:{
@@ -134,23 +120,31 @@ export default {
             return "text-align:center"
         },
         detail(index){
-            let detailInfo = this.tableData[index]
-            this.detailInfo = detailInfo
+            Object.assign(this.blogForm, this.tableData[index])
             this.showDetail = true
-            Object.assign(this.blogForm, detailInfo)
         },
         typeChange(){
             console.log(arguments)
         },
         blogUpdate(){
+            this.updateLoading = true
+            let blogForm = this.blogForm
+            blogForm.type = blogForm.type.join('|')
+            blogForm.label = blogForm.label.join('|')
+            console.log(blogForm)
             this.$axios.post("/api/blog/updateBlogById", {
                 blogForm: this.blogForm
             })
-            .then((res)=>{
-                console.log(res)
+            .then(()=>{
+                setTimeout(()=>{
+                    this.$router.go(0)
+                }, 500)
             })
             .catch((err)=>{
-                console.log(err)
+                setTimeout(()=>{
+                    this.updateLoading = false
+                    alert(err)
+                }, 500)
             })
         },
         selectType(){
@@ -158,12 +152,39 @@ export default {
         },
         selectLabel(){
             console.log(arguments)
+        },
+        dataInit(){
+            this.$axios.get("/api/blog/list", {
+                params:{
+                    pageNum:1
+                }
+            })
+            .then((data)=>{
+                if(data.data.success){
+                    let blogData = data.data.data
+                    let defaultData = []
+                    blogData.forEach((blog,i)=>{
+                        defaultData.push({
+                            blogId: blog.blogId,
+                            id: i+1,
+                            title: blog.title,
+                            content: blog.content,
+                            type: blog.type.split('|')[0] == ""?[]:blog.type.split('|'),
+                            label: blog.label.split('|')[0] == ""?[]:blog.label.split('|'),
+                            visitedN: blog.visitedN,
+                            commentN: blog.commentN
+                        })
+                    })
+                    this.tableData = defaultData
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
         }
     },
     mounted(){
-        for(let i=0; i<3; i++){
-            this.tableData = this.tableData.concat(this.tableData)
-        }
+        this.dataInit()
     }
 }
 </script>

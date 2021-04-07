@@ -1,49 +1,14 @@
 package dao
 
 import (
+	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"time"
 	"yxcblog/dbInit"
+	"yxcblog/model"
+	"yxcblog/model/request"
 )
-
-type Blog struct{
-	ID int
-	CreateAt time.Time
-	UpdateAt time.Time
-	DeleteAt time.Time
-	Article
-}
-
-type Article struct{
-	Title string
-	Content string
-	WorkNum int
-	Type string
-	Order int
-	Tag string
-	Visited int
-	BlogId string
-}
-
-type Comment struct{
-	ID int
-	AuthorId int
-	Time string
-	ReplyTo int
-	Blog int
-	BlackList bool
-}
-
-func (b *Blog)Create(){
-
-}
-func (b *Blog)Delete(){
-
-}
-func (b *Blog)Update(){
-
-}
 
 func CreateBlog(){}
 func CreateComment(blogId string, fatherCommentId string){
@@ -52,9 +17,9 @@ func CreateComment(blogId string, fatherCommentId string){
 
 func ReadBlogById(blogId string)(gin.H, error){
 	DB := dbInit.DB
-	var blog Blog
-	row := DB.QueryRow("SELECT createAt, updateAt,deleteAt, title,`content`,workNum, `type`, `order`, tag, visited,blogId FROM blog WHERE blogId=?;", blogId)
-	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.DeleteAt, &blog.Title, &blog.Content, &blog.Type, &blog.Order, &blog.Tag, &blog.Visited, &blog.BlogId)
+	var blog model.Blog
+	row := DB.QueryRow("SELECT createAt,updateAt,deleteAt, title,`content`, `type`, label, visitedN,blogId, commentN FROM blog WHERE blogId=?;", blogId)
+	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.DeleteAt, &blog.Title, &blog.Content, &blog.Type, &blog.Label, &blog.VisitedN, &blog.BlogId, &blog.CommentN)
 	if err != nil{
 		return nil, err
 	}
@@ -65,37 +30,38 @@ func ReadBlogById(blogId string)(gin.H, error){
 		"title": blog.Title,
 		"content":blog.Content,
 		"type": blog.Type,
-		"order": blog.Order,
-		"tag": blog.Tag,
-		"visited": blog.Visited,
+		"label": blog.Label,
+		"visitedN": blog.VisitedN,
 		"blogId":blog.BlogId,
+		"commentN": blog.CommentN,
 	}
 	return ans, nil
 }
 func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 	DB := dbInit.DB
 	ans := make([]gin.H, 0)
-	rows, err := DB.Query("SELECT createAt, updateAt,deleteAt, title,`content`,workNum, `type`, `order`, tag, visited,blogId FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
+	rows, err := DB.Query("SELECT `id`, createAt, updateAt,deleteAt, `title`,`content`,`type`, `label`, visitedN,blogId,commentN FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
 	if err != nil{
 		return ans, err
 	}
 	for rows.Next(){
-		var row Blog
-		err := rows.Scan(&row.CreateAt, &row.UpdateAt, &row.DeleteAt, &row.Title, &row.Content, &row.Type, &row.Order, &row.Tag, &row.Visited, &row.BlogId)
+		var row model.Blog
+		err := rows.Scan(&row.ID, &row.CreateAt, &row.UpdateAt, &row.DeleteAt, &row.Title, &row.Content, &row.Type, &row.Label, &row.VisitedN, &row.BlogId, &row.CommentN)
 		if err!=nil{
 			return ans, err
 		}
 		ans = append(ans, gin.H{
+			"id": row.ID,
 			"createAt":row.CreateAt,
 			"updateAt":row.UpdateAt,
 			"deleteAt":row.DeleteAt,
 			"title": row.Title,
 			"content":row.Content,
 			"type": row.Type,
-			"order": row.Order,
-			"tag": row.Tag,
-			"visited": row.Visited,
+			"label": row.Label,
+			"visitedN": row.VisitedN,
 			"blogId":row.BlogId,
+			"commentN": row.CommentN,
 		})
 	}
 	return ans, nil
@@ -124,8 +90,25 @@ func ReadBlogByKeyValue(key string, value string)(int,error){
 }
 func ReadCommentByBlogId(){}
 
-func UpdateBlogById(blogId string) {
-	log.Println(blogId)
+func UpdateBlogById(blogId string, form request.BlogForm)error{
+	DB := dbInit.DB
+	log.Println(blogId, form)
+	result, err := DB.Exec("UPDATE blog SET `title`=?,`content`=?,`visitedN`=?,`commentN`=?,`type`=?,`label`=? WHERE `blogId`=?", form.Title, form.Content, form.VisitedN, form.CommentN, form.Type, form.Label, blogId)
+	fmt.Println("error1")
+	if err != nil{
+		return err
+	}
+	rows, err := result.RowsAffected()
+	fmt.Println("error2")
+	if err != nil{
+		return err
+	}
+	fmt.Println("error3")
+	if rows == 1{
+		return nil
+	}else{
+		return errors.New("")
+	}
 }
 
 func DeleteBlogById(blogId string){

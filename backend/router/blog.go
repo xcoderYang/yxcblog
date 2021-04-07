@@ -4,9 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
+	"log"
 	"strconv"
 	"yxcblog/dao"
 	"yxcblog/dbInit"
+	"yxcblog/model/request"
 	"yxcblog/utils"
 )
 
@@ -20,7 +22,7 @@ func initBlog(r *gin.RouterGroup){
 
 func getBlog(ctx *gin.Context) {
 	pageNumStr := ctx.Query("pageNum")
-
+	log.Println(pageNumStr)
 	if pageNumStr == ""{
 		utils.ParamsError(ctx, nil)
 		return
@@ -58,36 +60,38 @@ func getBlogByItem(ctx *gin.Context){
 	})
 }
 
-
-type BlogForm struct{
-	Id int64	`json:"id"`
-	Title string `json:"title"`
-	Content string `json:"content"`
-	VisitedN int64 `json:"visitedN"`
-	CommentN int64 `json:"commentN"`
-	Type []string `json:"type"`
-	Label []string `json:"label"`
-}
-
-
 func UpdateBlogById(ctx *gin.Context){
 	blogForm,_ := ioutil.ReadAll(ctx.Request.Body)
-	form := BlogForm{}
+	form := request.BlogForm{}
 	jsonParse := gjson.ParseBytes(blogForm)
-	form.Id = jsonParse.Get("blogForm.id").Int()
-	form.Title = jsonParse.Get("blogForm.title").Value().(string)
+	form.BlogId = jsonParse.Get("blogForm.blogId").String()
+	form.Id = jsonParse.Get("blogForm.id").String()
+	form.Title = jsonParse.Get("blogForm.title").String()
 	form.Content = jsonParse.Get("blogForm.content").String()
-	form.VisitedN = jsonParse.Get("blogForm.visitedN").Int()
-	form.CommentN = jsonParse.Get("blogForm.commentN").Int()
-	form.Type = make([]string, 0)
-	for _,v:=range jsonParse.Get("blogForm.type").Array(){
-		form.Type = append(form.Type, v.String())
+	form.VisitedN = jsonParse.Get("blogForm.visitedN").String()
+	form.CommentN = jsonParse.Get("blogForm.commentN").String()
+	form.Type = ""
+	for i,v:=range jsonParse.Get("blogForm.type").Array(){
+		if i == 0{
+			form.Type+=v.String()
+		}else{
+			form.Type+="|"+v.String()
+		}
 	}
-	form.Label = make([]string, 0)
-	for _,v:=range jsonParse.Get("blogForm.label").Array(){
-		form.Label = append(form.Label, v.String())
+	form.Label = ""
+	for i,v:=range jsonParse.Get("blogForm.label").Array(){
+		if i == 0{
+			form.Label+=v.String()
+		}else{
+			form.Label+="|"+v.String()
+		}
 	}
 
+	err := dao.UpdateBlogById(form.BlogId, form)
+	if err !=  nil{
+		utils.ParamsError(ctx, err, "参数设置错误")
+		return
+	}
 	ctx.JSON(200, gin.H{
 		"success": true,
 		"data": "OK",
