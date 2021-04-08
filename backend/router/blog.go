@@ -18,11 +18,11 @@ func initBlog(r *gin.RouterGroup){
 	r.GET("/list", getBlog)
 	r.GET("/blogItem", getBlogByItem)
 	r.POST("/updateBlogById", UpdateBlogById)
+	r.POST("/createBlog", CreateBlog)
 }
 
 func getBlog(ctx *gin.Context) {
 	pageNumStr := ctx.Query("pageNum")
-	log.Println(pageNumStr)
 	if pageNumStr == ""{
 		utils.ParamsError(ctx, nil)
 		return
@@ -33,8 +33,9 @@ func getBlog(ctx *gin.Context) {
 		return
 	}
 	ans, err := dao.ReadBlogByPage(pageNum, 10)
+	log.Printf("%#v", ans)
 	if err != nil{
-		utils.ServerError(ctx, nil)
+		utils.ServerError(ctx, err, "服务器错误")
 		return
 	}
 	ctx.JSON(200, gin.H{
@@ -86,8 +87,31 @@ func UpdateBlogById(ctx *gin.Context){
 			form.Label+="|"+v.String()
 		}
 	}
-
 	err := dao.UpdateBlogById(form.BlogId, form)
+	if err !=  nil{
+		utils.ParamsError(ctx, err, "参数设置错误")
+		return
+	}
+	ctx.JSON(200, gin.H{
+		"success": true,
+		"data": "OK",
+	})
+}
+
+func CreateBlog(ctx *gin.Context){
+	blogAddForm,_ := ioutil.ReadAll(ctx.Request.Body)
+	form := request.BlogForm{}
+	jsonParse := gjson.ParseBytes(blogAddForm)
+	form.BlogId = jsonParse.Get("blogAddForm.blogId").String()
+	form.Id = jsonParse.Get("blogAddForm.id").String()
+	form.Title = jsonParse.Get("blogAddForm.title").String()
+	form.Content = jsonParse.Get("blogAddForm.content").String()
+	form.VisitedN = jsonParse.Get("blogAddForm.visitedN").String()
+	form.CommentN = jsonParse.Get("blogAddForm.commentN").String()
+	form.Type = jsonParse.Get("blogAddForm.type").String()
+	form.Label = jsonParse.Get("blogAddForm.label").String()
+
+	err := dao.CreateBlog(form)
 	if err !=  nil{
 		utils.ParamsError(ctx, err, "参数设置错误")
 		return

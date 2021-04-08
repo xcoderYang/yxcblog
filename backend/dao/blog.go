@@ -1,16 +1,38 @@
 package dao
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"math/rand"
+	"strconv"
+	"time"
 	"yxcblog/dbInit"
 	"yxcblog/model"
 	"yxcblog/model/request"
 )
 
-func CreateBlog(){}
+func CreateBlog(blogForm request.BlogForm)error{
+	DB := dbInit.DB
+	id := sha256.Sum256([]byte(string(rune(time.Now().Nanosecond()))+ strconv.FormatInt(rand.Int63(), 10)))
+	blogId := id[:]
+	result, err := DB.Exec("INSERT INTO blog(`createAt`,`updateAt`,`title`,`content`,`type`,`label`,`visitedN`,`commentN`,`blogId`) VALUES(?,?,?,?,?,?,?,?,?)",
+		time.Now(),time.Now(),0,blogForm.Title,blogForm.Content,blogForm.Type,blogForm.Label,blogForm.VisitedN,blogForm.CommentN,hex.EncodeToString(blogId))
+	if err!=nil{
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil{
+		return err
+	}
+	if rows == 1{
+		return nil
+	}else{
+		return errors.New("")
+	}
+}
 func CreateComment(blogId string, fatherCommentId string){
 	log.Println(blogId, fatherCommentId)
 }
@@ -40,13 +62,13 @@ func ReadBlogById(blogId string)(gin.H, error){
 func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 	DB := dbInit.DB
 	ans := make([]gin.H, 0)
-	rows, err := DB.Query("SELECT `id`, createAt, updateAt,deleteAt, `title`,`content`,`type`, `label`, visitedN,blogId,commentN FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
+	rows, err := DB.Query("SELECT `id`, createAt, updateAt, `title`,`content`,`type`, `label`, visitedN,blogId,commentN FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
 	if err != nil{
 		return ans, err
 	}
 	for rows.Next(){
 		var row model.Blog
-		err := rows.Scan(&row.ID, &row.CreateAt, &row.UpdateAt, &row.DeleteAt, &row.Title, &row.Content, &row.Type, &row.Label, &row.VisitedN, &row.BlogId, &row.CommentN)
+		err := rows.Scan(&row.ID, &row.CreateAt, &row.UpdateAt, &row.Title, &row.Content, &row.Type, &row.Label, &row.VisitedN, &row.BlogId, &row.CommentN)
 		if err!=nil{
 			return ans, err
 		}
@@ -54,7 +76,6 @@ func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 			"id": row.ID,
 			"createAt":row.CreateAt,
 			"updateAt":row.UpdateAt,
-			"deleteAt":row.DeleteAt,
 			"title": row.Title,
 			"content":row.Content,
 			"type": row.Type,
@@ -92,18 +113,14 @@ func ReadCommentByBlogId(){}
 
 func UpdateBlogById(blogId string, form request.BlogForm)error{
 	DB := dbInit.DB
-	log.Println(blogId, form)
 	result, err := DB.Exec("UPDATE blog SET `title`=?,`content`=?,`visitedN`=?,`commentN`=?,`type`=?,`label`=? WHERE `blogId`=?", form.Title, form.Content, form.VisitedN, form.CommentN, form.Type, form.Label, blogId)
-	fmt.Println("error1")
 	if err != nil{
 		return err
 	}
 	rows, err := result.RowsAffected()
-	fmt.Println("error2")
 	if err != nil{
 		return err
 	}
-	fmt.Println("error3")
 	if rows == 1{
 		return nil
 	}else{

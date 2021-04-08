@@ -43,7 +43,7 @@
                 label="操作">
                 <template slot-scope="scope">
                     <el-button
-                        @click.native.prevent="detail(scope.$index)"
+                        @click.native.prevent="showDetailDialog(scope.$index)"
                         type="text"
                         size="small"
                     >
@@ -52,41 +52,86 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog 
+        <div style="text-align:center;margin-top:50px;">
+            <el-button @click="showBlogAddDialog">
+                新增博文
+            </el-button>
+        </div>
+        <!-- 博文编辑框 -->
+        <el-dialog
         title="博文详情"
         :visible.sync="showDetail"
+        :close-on-click-modal=false
         >
-        <div>
-            <el-form ref="blogForm" :model="blogForm" label-width="100px" v-loading="updateLoading">
-                <el-form-item label="标题">
-                    <el-input v-model="blogForm.title"></el-input>
-                </el-form-item>
-                <el-form-item label="内容">
-                    <el-input type="textarea" :row="10" v-model="blogForm.content"></el-input>
-                </el-form-item>
-                <el-form-item label="类型">
-                    <el-checkbox-group v-model="blogForm.type" @change="selectType">
-                        <el-checkbox v-for="(type, i) in allType" :label="type" :key="i"></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="标签">
-                    <el-checkbox-group v-model="blogForm.label" @change="selectLabel">
-                        <el-checkbox v-for="(label, i) in allLabel" :label="label" :key="i"></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="访问量">
-                    <span>{{blogForm.visitedN}}</span>
-                </el-form-item>
-                <el-form-item label="评论数">
-                    <span>{{blogForm.commentN}}</span>
-                </el-form-item>
-            </el-form>
-            <section style="text-align:center">
-                <el-button type="primary" @click="blogUpdate">
-                    确定修改
-                </el-button>
-            </section>
-        </div>
+            <div>
+                <el-form ref="blogForm" :rules="blogRules" :model="blogForm" label-width="100px" v-loading="updateLoading">
+                    <el-form-item label="标题" prop="title">
+                        <el-input v-model="blogForm.title"></el-input>
+                    </el-form-item>
+                    <el-form-item label="内容" prop="content">
+                        <el-input type="textarea" :row="10" v-model="blogForm.content"></el-input>
+                    </el-form-item>
+                    <el-form-item label="类型">
+                        <el-checkbox-group v-model="blogForm.type">
+                            <el-checkbox v-for="(type, i) in allType" :label="type" :key="i"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="标签">
+                        <el-checkbox-group v-model="blogForm.label">
+                            <el-checkbox v-for="(label, i) in allLabel" :label="label" :key="i"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="访问量">
+                        <span>{{blogForm.visitedN}}</span>
+                    </el-form-item>
+                    <el-form-item label="评论数">
+                        <span>{{blogForm.commentN}}</span>
+                    </el-form-item>
+                </el-form>
+                <section style="text-align:center">
+                    <el-button type="primary" @click="blogUpdate">
+                        确定修改
+                    </el-button>
+                </section>
+            </div>
+        </el-dialog>
+        <!-- 新增博文框 -->
+        <el-dialog 
+        title="新增博文"
+        :visible.sync="showBlogAdd"
+        :close-on-click-modal=false
+        >
+            <div>
+                <el-form ref="blogAddForm" :rules="blogRules" :model="blogAddForm" label-width="100px" v-loading="addLoading">
+                    <el-form-item label="标题" prop="title">
+                        <el-input v-model="blogAddForm.title"></el-input>
+                    </el-form-item>
+                    <el-form-item label="内容" prop="content">
+                        <el-input type="textarea" :row="10" v-model="blogAddForm.content"></el-input>
+                    </el-form-item>
+                    <el-form-item label="类型">
+                        <el-checkbox-group v-model="blogAddForm.type">
+                            <el-checkbox v-for="(type, i) in allType" :label="type" :key="i"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="标签">
+                        <el-checkbox-group v-model="blogAddForm.label">
+                            <el-checkbox v-for="(label, i) in allLabel" :label="label" :key="i"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="访问量">
+                        <span>{{blogAddForm.visitedN}}</span>
+                    </el-form-item>
+                    <el-form-item label="评论数">
+                        <span>{{blogAddForm.commentN}}</span>
+                    </el-form-item>
+                </el-form>
+                <section style="text-align:center">
+                    <el-button type="primary" @click="blogAdd">
+                        新增博文
+                    </el-button>
+                </section>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -96,7 +141,7 @@ export default {
         return {
             tableData:[],
             showDetail: false,
-            detailInfo: {},
+            showBlogAdd: false,
             blogForm:{
                 blogId: '',
                 title: 'title',
@@ -107,9 +152,28 @@ export default {
                 type: [],
                 label: [],
             },
+            blogAddForm:{
+                blogId: '',
+                title: '',
+                content: '',
+                visitedN: 0,
+                commentN: 0,
+                type: [],
+                label: [],
+            },
             allType: ['a','b','c','d','e','f','g'],
             allLabel: ['A', 'B', 'C', 'D', 'E', 'F'],
-            updateLoading: false
+            updateLoading: false,
+            addLoading: false,
+            blogRules:{
+                title:[
+                    {required:true,message:'请输入博文标题', trigger: 'blur'},
+                    {min:3,max:100,message:'标题长度请控制在3-100之间', trigger:'blur'}
+                ],
+                content:[
+                    {required:true,message:'请输入博文内容',trigger:'blur'}
+                ]
+            }
         }
     },
     methods:{
@@ -119,32 +183,66 @@ export default {
         headStyle(){
             return "text-align:center"
         },
-        detail(index){
+        showDetailDialog(index){
             Object.assign(this.blogForm, this.tableData[index])
             this.showDetail = true
+        },
+        showBlogAddDialog(){
+            this.showBlogAdd = true
         },
         typeChange(){
             console.log(arguments)
         },
         blogUpdate(){
-            this.updateLoading = true
-            let blogForm = this.blogForm
-            blogForm.type = blogForm.type.join('|')
-            blogForm.label = blogForm.label.join('|')
-            console.log(blogForm)
-            this.$axios.post("/api/blog/updateBlogById", {
-                blogForm: this.blogForm
+            this.$refs['blogForm'].validate((valid)=>{
+                if(valid){
+                    this.updateLoading = true
+                    let blogForm = this.blogForm
+                    blogForm.type = blogForm.type.join('|')
+                    blogForm.label = blogForm.label.join('|')
+                    console.log(blogForm)
+                    this.$axios.post("/api/blog/updateBlogById", {
+                        blogForm: this.blogForm
+                    })
+                    .then(()=>{
+                        setTimeout(()=>{
+                            this.$router.go(0)
+                        }, 500)
+                    })
+                    .catch((err)=>{
+                        setTimeout(()=>{
+                            this.updateLoading = false
+                            alert(err)
+                        }, 500)
+                    })
+                }
             })
-            .then(()=>{
-                setTimeout(()=>{
-                    this.$router.go(0)
-                }, 500)
-            })
-            .catch((err)=>{
-                setTimeout(()=>{
-                    this.updateLoading = false
-                    alert(err)
-                }, 500)
+        },
+        blogAdd(){
+            this.$refs['blogAddForm'].validate((valid)=>{
+                if(valid){
+                    this.addLoading = true
+                    let blogAddForm = this.blogAddForm
+                    blogAddForm.type = blogAddForm.type.join('|')
+                    blogAddForm.label = blogAddForm.label.join('|')
+                    console.log(blogAddForm)
+                    this.$axios.post("/api/blog/createBlog", {
+                        blogAddForm: this.blogAddForm
+                    })
+                    .then(()=>{
+                        // setTimeout(()=>{
+                        //     this.$router.go(0)
+                        // }, 500)
+                    })
+                    .catch((err)=>{
+                        setTimeout(()=>{
+                            this.updateLoading = false
+                            alert(err)
+                        }, 500)
+                    })
+                }else{
+                    return false
+                }
             })
         },
         selectType(){
