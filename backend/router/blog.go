@@ -19,6 +19,7 @@ func initBlog(r *gin.RouterGroup){
 	r.GET("/blogItem", getBlogByItem)
 	r.POST("/updateBlogById", UpdateBlogById)
 	r.POST("/createBlog", CreateBlog)
+	r.POST("/deleteBlogById", DeleteBlogById)
 }
 
 func getBlog(ctx *gin.Context) {
@@ -120,5 +121,22 @@ func CreateBlog(ctx *gin.Context){
 		"success": true,
 		"data": "OK",
 	})
+}
+
+func DeleteBlogById(ctx *gin.Context){
+	blogForm,_ := ioutil.ReadAll(ctx.Request.Body)
+	jsonParse := gjson.ParseBytes(blogForm)
+	blogId := jsonParse.Get("blogId").String()
+	err := dao.DeleteBlogById(blogId)
+	if err!=nil{
+		utils.ParamsError(ctx, err, "参数错误")
+		return
+	}
+	ctx.JSON(200, gin.H{
+		"success": true,
+		"data": "OK",
+	})
+
+
 }
 

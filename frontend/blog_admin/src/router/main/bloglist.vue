@@ -89,8 +89,11 @@
                     </el-form-item>
                 </el-form>
                 <section style="text-align:center">
-                    <el-button type="primary" @click="blogUpdate">
+                    <el-button style="margin-right:50px;" type="primary" @click="blogUpdate">
                         确定修改
+                    </el-button>
+                    <el-button type="danger" @click="blogDelete">
+                        删除博文
                     </el-button>
                 </section>
             </div>
@@ -230,9 +233,9 @@ export default {
                         blogAddForm: this.blogAddForm
                     })
                     .then(()=>{
-                        // setTimeout(()=>{
-                        //     this.$router.go(0)
-                        // }, 500)
+                        setTimeout(()=>{
+                            this.$router.go(0)
+                        }, 500)
                     })
                     .catch((err)=>{
                         setTimeout(()=>{
@@ -243,6 +246,17 @@ export default {
                 }else{
                     return false
                 }
+            })
+        },
+        blogDelete(){
+            this.$axios.post("/api/blog/deleteBlogById", {
+                blogId: this.blogForm.blogId
+            })
+            .then(()=>{
+                console.log("yes")
+            })
+            .catch(()=>{
+                console.log("no")
             })
         },
         selectType(){

@@ -19,7 +19,7 @@ func CreateBlog(blogForm request.BlogForm)error{
 	id := sha256.Sum256([]byte(string(rune(time.Now().Nanosecond()))+ strconv.FormatInt(rand.Int63(), 10)))
 	blogId := id[:]
 	result, err := DB.Exec("INSERT INTO blog(`createAt`,`updateAt`,`title`,`content`,`type`,`label`,`visitedN`,`commentN`,`blogId`) VALUES(?,?,?,?,?,?,?,?,?)",
-		time.Now(),time.Now(),0,blogForm.Title,blogForm.Content,blogForm.Type,blogForm.Label,blogForm.VisitedN,blogForm.CommentN,hex.EncodeToString(blogId))
+		time.Now(),time.Now(),blogForm.Title,blogForm.Content,blogForm.Type,blogForm.Label,blogForm.VisitedN,blogForm.CommentN,hex.EncodeToString(blogId))
 	if err!=nil{
 		return err
 	}
@@ -128,8 +128,21 @@ func UpdateBlogById(blogId string, form request.BlogForm)error{
 	}
 }
 
-func DeleteBlogById(blogId string){
-	log.Println(blogId)
+func DeleteBlogById(blogId string) error{
+	DB := dbInit.DB
+	result, err := DB.Exec("DELETE FROM blog WHERE blogId=?",blogId)
+	if err!=nil{
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil{
+		return err
+	}
+	if rows == 1{
+		return nil
+	}else{
+		return errors.New("")
+	}
 }
 func DeleteComment(blogId string, commentId string){
 	log.Println(blogId, commentId)
