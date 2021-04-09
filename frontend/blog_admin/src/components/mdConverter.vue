@@ -1,17 +1,17 @@
 <template>
     <div>
       <el-row class="title">
-        <el-col class="writer">
-            {{title}}
+        <el-col :span="10" :offset="1" class="writer">
+            <el-input type="textarea" v-model="title" :rows="20"></el-input>
         </el-col>
-        <el-col class="mder" v-html="mdTitle">
+        <el-col :span="10" :offset="2" class="mder" v-html="mdTitle">
         </el-col>
       </el-row>
       <el-row class="content">
-        <el-col class="writer">
+        <el-col :span="12" class="writer">
             {{content}}
         </el-col>
-        <el-col class="mder" v-html="mdContent">
+        <el-col :span="12" class="mder" v-html="mdContent">
         </el-col>
       </el-row>
     </div>    
