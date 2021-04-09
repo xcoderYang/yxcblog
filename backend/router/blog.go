@@ -136,7 +136,5 @@ func DeleteBlogById(ctx *gin.Context){
 		"success": true,
 		"data": "OK",
 	})
-
-
 }
 

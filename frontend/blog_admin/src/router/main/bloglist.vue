@@ -70,6 +70,9 @@
                     </el-form-item>
                     <el-form-item label="内容" prop="content">
                         <el-input type="textarea" :row="10" v-model="blogForm.content"></el-input>
+                        <el-button style="margin-top:20px;" @click="mdShow">
+                            markdown撰写模式
+                        </el-button>
                     </el-form-item>
                     <el-form-item label="类型">
                         <el-checkbox-group v-model="blogForm.type">
@@ -136,15 +139,31 @@
                 </section>
             </div>
         </el-dialog>
+        <!-- markdown对比撰写模式框 -->
+        <el-dialog
+        title="markdown撰写"
+        :visible.sync="markdownWriter"
+        :close-on-click-modal=false
+        :fullscreen=true
+        :before-close="mdBeforeCloseConfirm"
+        >
+            <md-converter :title="mdTitle"></md-converter>
+        </el-dialog>
     </div>
 </template>
 <script>
+import mdConverter from "../../components/mdConverter"
 export default {
+    components: { mdConverter },
+    component:{
+        mdConverter
+    },
     data(){
         return {
             tableData:[],
             showDetail: false,
             showBlogAdd: false,
+            mdTitle: "------ \n##学习内容\n ------ \n * vue中复杂的v-for和v-if嵌套\n* vue事件处理复习\n* v-if v-else的熟悉使用\n ------ \nsdafa",
             blogForm:{
                 blogId: '',
                 title: 'title',
@@ -176,7 +195,8 @@ export default {
                 content:[
                     {required:true,message:'请输入博文内容',trigger:'blur'}
                 ]
-            }
+            },
+            markdownWriter: false,
         }
     },
     methods:{
@@ -249,14 +269,21 @@ export default {
             })
         },
         blogDelete(){
-            this.$axios.post("/api/blog/deleteBlogById", {
-                blogId: this.blogForm.blogId
+            this.$confirm("确定要删除此条博文吗?", "警告",{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
             })
             .then(()=>{
-                console.log("yes")
-            })
-            .catch(()=>{
-                console.log("no")
+                this.$axios.post("/api/blog/deleteBlogById", {
+                    blogId: this.blogForm.blogId
+                })
+                .then(()=>{
+                    this.$router.go(0)
+                })
+                .catch(()=>{
+                    console.log("no")
+                })
             })
         },
         selectType(){
@@ -293,6 +320,13 @@ export default {
             .catch((err)=>{
                 console.log(err)
             })
+        },
+        mdShow(){
+            this.markdownWriter = true
+        },
+        mdBeforeCloseConfirm(done){
+            alert("123")
+            done()
         }
     },
     mounted(){
