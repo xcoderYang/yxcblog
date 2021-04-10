@@ -70,7 +70,7 @@
                     </el-form-item>
                     <el-form-item label="内容" prop="content">
                         <el-input type="textarea" :row="10" v-model="blogForm.content"></el-input>
-                        <el-button style="margin-top:20px;" @click="mdShow">
+                        <el-button style="margin-top:20px;" @click="mdShow('edit')">
                             markdown撰写模式
                         </el-button>
                     </el-form-item>
@@ -114,6 +114,9 @@
                     </el-form-item>
                     <el-form-item label="内容" prop="content">
                         <el-input type="textarea" :row="10" v-model="blogAddForm.content"></el-input>
+                        <el-button style="margin-top:20px;" @click="mdShow('create')">
+                            markdown撰写模式
+                        </el-button>
                     </el-form-item>
                     <el-form-item label="类型">
                         <el-checkbox-group v-model="blogAddForm.type">
@@ -147,7 +150,7 @@
         :fullscreen=true
         :before-close="mdBeforeCloseConfirm"
         >
-            <md-converter :title="mdTitle"></md-converter>
+            <md-converter :title="mdTitle" :content="mdContent" @confirm="mdConfirm" @cancel="mdCancel"></md-converter>
         </el-dialog>
     </div>
 </template>
@@ -163,7 +166,8 @@ export default {
             tableData:[],
             showDetail: false,
             showBlogAdd: false,
-            mdTitle: "------ \n##学习内容\n ------ \n * vue中复杂的v-for和v-if嵌套\n* vue事件处理复习\n* v-if v-else的熟悉使用\n ------ \nsdafa",
+            mdTitle: "",
+            mdContent: "",
             blogForm:{
                 blogId: '',
                 title: 'title',
@@ -197,6 +201,7 @@ export default {
                 ]
             },
             markdownWriter: false,
+            mdWriterType: 'edit',
         }
     },
     methods:{
@@ -321,12 +326,35 @@ export default {
                 console.log(err)
             })
         },
-        mdShow(){
+        mdShow(type){
+            this.mdWriterType = type
+            if(type === "edit"){
+                this.mdContent = this.blogForm.content
+                this.mdTitle = this.blogForm.title
+            }else if(type === "create"){
+                this.mdTitle = this.blogAddForm.title
+                this.mdContent = this.blogAddForm.content
+            }
+            console.log(this.mdTitle)
+            console.log(this.mdContent)
             this.markdownWriter = true
         },
         mdBeforeCloseConfirm(done){
             alert("123")
             done()
+        },
+        mdConfirm(data){
+            let form
+            if(this.mdWriterType === "edit"){
+                form = this.blogForm
+            }else if(this.mdWriterType === "create"){
+                form = this.blogAddForm
+            }
+            form.title = data.title
+            form.content = data.content
+        },
+        mdCancel(){
+            this.markdownWriter = false
         }
     },
     mounted(){
