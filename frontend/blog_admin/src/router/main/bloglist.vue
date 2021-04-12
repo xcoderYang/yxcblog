@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="bloglist">
         <el-table 
         :data="tableData" 
         style="width: 90%;margin-left:5%;margin-top:80px;overflow:auto;"
@@ -16,12 +16,17 @@
             </el-table-column>
             <el-table-column
                 prop="title"
-                label="标题"
-                width="180">
+                label="标题">
+                <template slot-scope="scope">
+                    <div class="maxSizeOverflow">{{scope.row.title}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="content"
                 label="内容">
+                <template slot-scope="scope">
+                    <div class="maxSizeOverflow">{{scope.row.content}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="type"
@@ -38,6 +43,13 @@
             <el-table-column
                 prop="commentN"
                 label="评论数">
+            </el-table-column>
+            <el-table-column
+                prop="public"
+                label="已发布">
+                <template slot-scope="scope">
+                    <span>{{scope.row.public==="1"?"是":"否"}}</span>
+                </template>
             </el-table-column>
             <el-table-column
                 label="操作">
@@ -90,6 +102,10 @@
                     <el-form-item label="评论数">
                         <span>{{blogForm.commentN}}</span>
                     </el-form-item>
+                    <el-form-item label="评论数">
+                        <el-radio v-model="blogForm.public" label="0">未发布</el-radio>
+                        <el-radio v-model="blogForm.public" label="1">已发布</el-radio>
+                    </el-form-item>
                 </el-form>
                 <section style="text-align:center">
                     <el-button style="margin-right:50px;" type="primary" @click="blogUpdate">
@@ -134,6 +150,10 @@
                     <el-form-item label="评论数">
                         <span>{{blogAddForm.commentN}}</span>
                     </el-form-item>
+                    <el-form-item label="评论数">
+                        <el-radio v-model="blogAddForm.public" label="0">未发布</el-radio>
+                        <el-radio v-model="blogAddForm.public" label="1">已发布</el-radio>
+                    </el-form-item>
                 </el-form>
                 <section style="text-align:center">
                     <el-button type="primary" @click="blogAdd">
@@ -174,7 +194,7 @@ export default {
                 content: 'content',
                 visitedN: 100,
                 commentN: 1000,
-
+                public: 0,
                 type: [],
                 label: [],
             },
@@ -186,6 +206,7 @@ export default {
                 commentN: 0,
                 type: [],
                 label: [],
+                public: 0,
             },
             allType: ['a','b','c','d','e','f','g'],
             allLabel: ['A', 'B', 'C', 'D', 'E', 'F'],
@@ -213,6 +234,7 @@ export default {
         },
         showDetailDialog(index){
             Object.assign(this.blogForm, this.tableData[index])
+            console.log(this.blogForm)
             this.showDetail = true
         },
         showBlogAddDialog(){
@@ -291,16 +313,10 @@ export default {
                 })
             })
         },
-        selectType(){
-            console.log(arguments)
-        },
-        selectLabel(){
-            console.log(arguments)
-        },
-        dataInit(){
+        getData(pageNum){
             this.$axios.get("/api/blog/list", {
                 params:{
-                    pageNum:1
+                    pageNum:pageNum
                 }
             })
             .then((data)=>{
@@ -316,7 +332,8 @@ export default {
                             type: blog.type.split('|')[0] == ""?[]:blog.type.split('|'),
                             label: blog.label.split('|')[0] == ""?[]:blog.label.split('|'),
                             visitedN: blog.visitedN,
-                            commentN: blog.commentN
+                            commentN: blog.commentN,
+                            public: blog.public+""
                         })
                     })
                     this.tableData = defaultData
@@ -325,6 +342,9 @@ export default {
             .catch((err)=>{
                 console.log(err)
             })
+        },
+        dataInit(){
+            this.getData(1)
         },
         mdShow(type){
             this.mdWriterType = type
@@ -352,6 +372,7 @@ export default {
             }
             form.title = data.title
             form.content = data.content
+            this.markdownWriter = false
         },
         mdCancel(){
             this.markdownWriter = false
@@ -363,4 +384,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.bloglist
+    .maxSizeOverflow
+        width 150px
+        overflow hidden
+        white-space nowrap
+        text-overflow ellipsis
 </style>

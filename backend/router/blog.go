@@ -72,6 +72,7 @@ func UpdateBlogById(ctx *gin.Context){
 	form.Content = jsonParse.Get("blogForm.content").String()
 	form.VisitedN = jsonParse.Get("blogForm.visitedN").String()
 	form.CommentN = jsonParse.Get("blogForm.commentN").String()
+	form.Public = jsonParse.Get("blogForm.public").String()
 	form.Type = ""
 	for i,v:=range jsonParse.Get("blogForm.type").Array(){
 		if i == 0{
@@ -111,6 +112,7 @@ func CreateBlog(ctx *gin.Context){
 	form.CommentN = jsonParse.Get("blogAddForm.commentN").String()
 	form.Type = jsonParse.Get("blogAddForm.type").String()
 	form.Label = jsonParse.Get("blogAddForm.label").String()
+	form.Public = jsonParse.Get("blogAddForm.public").String()
 
 	err := dao.CreateBlog(form)
 	if err !=  nil{

@@ -9,4 +9,5 @@ type BlogForm struct{
 	CommentN string `json:"commentN"`
 	Type string `json:"type"`
 	Label string `json:"label"`
+	Public string `json:"public"`
 }

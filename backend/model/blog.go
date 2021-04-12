@@ -20,6 +20,7 @@ type Article struct{
 	VisitedN int
 	BlogId string
 	CommentN int
+	Public int
 }
 
 type Comment struct{

@@ -18,8 +18,8 @@ func CreateBlog(blogForm request.BlogForm)error{
 	DB := dbInit.DB
 	id := sha256.Sum256([]byte(string(rune(time.Now().Nanosecond()))+ strconv.FormatInt(rand.Int63(), 10)))
 	blogId := id[:]
-	result, err := DB.Exec("INSERT INTO blog(`createAt`,`updateAt`,`title`,`content`,`type`,`label`,`visitedN`,`commentN`,`blogId`) VALUES(?,?,?,?,?,?,?,?,?)",
-		time.Now(),time.Now(),blogForm.Title,blogForm.Content,blogForm.Type,blogForm.Label,blogForm.VisitedN,blogForm.CommentN,hex.EncodeToString(blogId))
+	result, err := DB.Exec("INSERT INTO blog(`createAt`,`updateAt`,`title`,`content`,`type`,`label`,`visitedN`,`commentN`,`blogId`,`public`) VALUES(?,?,?,?,?,?,?,?,?,?)",
+		time.Now(),time.Now(),blogForm.Title,blogForm.Content,blogForm.Type,blogForm.Label,blogForm.VisitedN,blogForm.CommentN,hex.EncodeToString(blogId),blogForm.Public)
 	if err!=nil{
 		return err
 	}
@@ -40,8 +40,8 @@ func CreateComment(blogId string, fatherCommentId string){
 func ReadBlogById(blogId string)(gin.H, error){
 	DB := dbInit.DB
 	var blog model.Blog
-	row := DB.QueryRow("SELECT createAt,updateAt,deleteAt, title,`content`, `type`, label, visitedN,blogId, commentN FROM blog WHERE blogId=?;", blogId)
-	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.DeleteAt, &blog.Title, &blog.Content, &blog.Type, &blog.Label, &blog.VisitedN, &blog.BlogId, &blog.CommentN)
+	row := DB.QueryRow("SELECT createAt,updateAt,deleteAt, title,`content`, `type`, label, visitedN,blogId, commentN,`public` FROM blog WHERE blogId=?;", blogId)
+	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.DeleteAt, &blog.Title, &blog.Content, &blog.Type, &blog.Label, &blog.VisitedN, &blog.BlogId, &blog.CommentN, &blog.Public)
 	if err != nil{
 		return nil, err
 	}
@@ -56,19 +56,20 @@ func ReadBlogById(blogId string)(gin.H, error){
 		"visitedN": blog.VisitedN,
 		"blogId":blog.BlogId,
 		"commentN": blog.CommentN,
+		"public": blog.Public,
 	}
 	return ans, nil
 }
 func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 	DB := dbInit.DB
 	ans := make([]gin.H, 0)
-	rows, err := DB.Query("SELECT `id`, createAt, updateAt, `title`,`content`,`type`, `label`, visitedN,blogId,commentN FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
+	rows, err := DB.Query("SELECT `id`, createAt, updateAt, `title`,`content`,`type`, `label`, visitedN,blogId,commentN,`public` FROM blog ORDER BY createAt LIMIT ?,?;", (pageNum-1)*pageSize, pageNum*pageSize)
 	if err != nil{
 		return ans, err
 	}
 	for rows.Next(){
 		var row model.Blog
-		err := rows.Scan(&row.ID, &row.CreateAt, &row.UpdateAt, &row.Title, &row.Content, &row.Type, &row.Label, &row.VisitedN, &row.BlogId, &row.CommentN)
+		err := rows.Scan(&row.ID, &row.CreateAt, &row.UpdateAt, &row.Title, &row.Content, &row.Type, &row.Label, &row.VisitedN, &row.BlogId, &row.CommentN, &row.Public)
 		if err!=nil{
 			return ans, err
 		}
@@ -83,6 +84,7 @@ func ReadBlogByPage(pageNum int, pageSize int)([]gin.H, error){
 			"visitedN": row.VisitedN,
 			"blogId":row.BlogId,
 			"commentN": row.CommentN,
+			"public": row.Public,
 		})
 	}
 	return ans, nil
@@ -113,7 +115,7 @@ func ReadCommentByBlogId(){}
 
 func UpdateBlogById(blogId string, form request.BlogForm)error{
 	DB := dbInit.DB
-	result, err := DB.Exec("UPDATE blog SET `title`=?,`content`=?,`visitedN`=?,`commentN`=?,`type`=?,`label`=? WHERE `blogId`=?", form.Title, form.Content, form.VisitedN, form.CommentN, form.Type, form.Label, blogId)
+	result, err := DB.Exec("UPDATE blog SET `title`=?,`content`=?,`visitedN`=?,`commentN`=?,`type`=?,`label`=?,`public`=? WHERE `blogId`=?", form.Title, form.Content, form.VisitedN, form.CommentN, form.Type, form.Label, form.Public, blogId)
 	if err != nil{
 		return err
 	}
