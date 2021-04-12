@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="converter">
       <el-row class="title">
         <el-col :span="10" :offset="1" class="writer">
             <el-input placeholder="请输入博文标题" v-model="curTitle"></el-input>
@@ -9,11 +9,11 @@
       </el-row>
       <el-row style="margin-top:30px;" class="content">
         <el-col :span="10" :offset="1" class="writer">
-            <textarea placeholder="请输入博文内容" v-model="curContent" rows="40" style="resize:none;width:100%;padding:20px;font-size:18px;color:#333;height:650px;box-sizing:border-box" @scroll="test">
+            <textarea placeholder="请输入博文内容" v-model="curContent" rows="40" class="blogInput" @scroll="blogScroll">
             </textarea>
             <!-- <el-input placeholder="请输入博文内容" type="textarea" v-model="curContent" :rows="30" resize="none" @scroll.native="test"></el-input> -->
         </el-col>
-        <el-col :span="10" :offset="2" class="mder" v-html="mdContent" style="height:650px;overflow:auto;font-size:18px;padding:20px;border:1px solid black;">
+        <el-col :span="10" :offset="2" class="mder blogPreview" v-html="mdContent">
         </el-col>
       </el-row>
       <el-row style="text-align:center;margin-top:50px;" class="btnGroup">
@@ -35,6 +35,7 @@ export default {
             curContent: '',
             mdTitle:'',
             mdContent:'',
+            debounceCache: ""
         }
     },
     watch:{
@@ -67,12 +68,35 @@ export default {
         cancel(){
             this.$emit("cancel")
         },
-        test(){
-            console.log(arguments)
-        }
+        blogScroll(){
+            let args = arguments
+            if (this.debounceCache!==""){
+                this.debounceCache(args)
+                return
+            }
+            this.debounceCache = this.$utils.debounce(function(args){
+                console.log(args)
+            }, 150, this)
+            this.debounceCache(args)
+        },
     }
 }
 </script>
 <style lang="stylus" scoped>
-
+.converter
+    .blogInput
+        resize none
+        width 100%
+        padding 20px
+        font-size 18px
+        color #333
+        height 650px
+        box-sizing border-box
+        line-height 30px
+    .blogPreview
+        height 650px
+        overflow auto
+        font-size 18px
+        padding 20px
+        border 1px solid black
 </style>

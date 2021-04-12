@@ -17,6 +17,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import Showdown from 'showdown'
 import Axios from "axios"
 import store from "./store/index"
+import Utils from "./utils/utils"
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
@@ -26,6 +27,7 @@ Vue.use(Showdown)
 Vue.prototype.$showdown = Showdown
 Vue.prototype.serverUrl = "http://localhost:8082"
 Vue.prototype.$axios = Axios
+Vue.prototype.$utils = Utils
 
 new Vue({
   render: h => h(App),
