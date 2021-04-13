@@ -35,7 +35,8 @@ export default {
             curContent: '',
             mdTitle:'',
             mdContent:'',
-            debounceCache: ""
+            debounceCache: "",
+            scrollPercent: ""
         }
     },
     watch:{
@@ -52,6 +53,10 @@ export default {
         curContent:function(val){
             let converter = new this.$showdown.Converter()
             this.mdContent = converter.makeHtml(val)
+        },
+        scrollPercent: function(val){
+            let ele = document.getElementsByClassName("blogPreview")[0]
+            this.$utils.scrollToY(ele, ele.scrollHeight*val, 500)
         }
     },
     mounted(){
@@ -68,14 +73,13 @@ export default {
         cancel(){
             this.$emit("cancel")
         },
-        blogScroll(){
-            let args = arguments
+        blogScroll(args){
             if (this.debounceCache!==""){
                 this.debounceCache(args)
                 return
             }
             this.debounceCache = this.$utils.debounce(function(args){
-                console.log(args)
+                this.scrollPercent = args.target.scrollTop/args.target.scrollHeight
             }, 150, this)
             this.debounceCache(args)
         },

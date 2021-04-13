@@ -31,10 +31,16 @@
             <el-table-column
                 prop="type"
                 label="类型">
+                <template slot-scope="scope">
+                    <div>{{scope.row.type.sort().join(",")}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="label"
                 label="标签">
+                <template slot-scope="scope">
+                    <div>{{scope.row.label.sort().join(",")}}</div>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="visitedN"

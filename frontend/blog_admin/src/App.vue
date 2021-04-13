@@ -35,11 +35,12 @@ export default {
               let userInfo = JSON.parse(res.data.data)
               userInfo.sessionId = sessionId
               this.$store.commit("USER_LOGIN", userInfo)
-              this.showLoginBox = false
-              if(this.blockedNextUrl){
-                this.$router.push(this.blockedNextUrl)
-                this.blockedNextUrl = ""
-              }
+              this.$router.go(0)
+              // this.showLoginBox = false
+              // if(this.blockedNextUrl){
+              //   this.$router.push(this.blockedNextUrl)
+              //   this.blockedNextUrl = ""
+              // }
           }else{
               alert(res.data.msg)
           }
