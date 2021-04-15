@@ -257,7 +257,7 @@ export default {
                     blogForm.type = blogForm.type.join('|')
                     blogForm.label = blogForm.label.join('|')
                     console.log(blogForm)
-                    this.$axios.post("/api/blog/updateBlogById", {
+                    this.$axios.post(this.serverUrl+"/api/blog/updateBlogById", {
                         blogForm: this.blogForm
                     })
                     .then(()=>{
@@ -282,7 +282,7 @@ export default {
                     blogAddForm.type = blogAddForm.type.join('|')
                     blogAddForm.label = blogAddForm.label.join('|')
                     console.log(blogAddForm)
-                    this.$axios.post("/api/blog/createBlog", {
+                    this.$axios.post(this.serverUrl+"/api/blog/createBlog", {
                         blogAddForm: this.blogAddForm
                     })
                     .then(()=>{
@@ -308,7 +308,7 @@ export default {
                 type: 'warning'
             })
             .then(()=>{
-                this.$axios.post("/api/blog/deleteBlogById", {
+                this.$axios.post(this.serverUrl+"/api/blog/deleteBlogById", {
                     blogId: this.blogForm.blogId
                 })
                 .then(()=>{
@@ -320,7 +320,7 @@ export default {
             })
         },
         getData(pageNum){
-            this.$axios.get("/api/blog/list", {
+            this.$axios.get(this.serverUrl+"/api/blog/list", {
                 params:{
                     pageNum:pageNum
                 }

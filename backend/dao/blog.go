@@ -40,15 +40,14 @@ func CreateComment(blogId string, fatherCommentId string){
 func ReadBlogById(blogId string)(gin.H, error){
 	DB := dbInit.DB
 	var blog model.Blog
-	row := DB.QueryRow("SELECT createAt,updateAt,deleteAt, title,`content`, `type`, label, visitedN,blogId, commentN,`public` FROM blog WHERE blogId=?;", blogId)
-	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.DeleteAt, &blog.Title, &blog.Content, &blog.Type, &blog.Label, &blog.VisitedN, &blog.BlogId, &blog.CommentN, &blog.Public)
+	row := DB.QueryRow("SELECT createAt,updateAt, title,`content`, `type`, label, visitedN,blogId, commentN,`public` FROM blog WHERE blogId=?;", blogId)
+	err := row.Scan(&blog.CreateAt, &blog.UpdateAt, &blog.Title, &blog.Content, &blog.Type, &blog.Label, &blog.VisitedN, &blog.BlogId, &blog.CommentN, &blog.Public)
 	if err != nil{
 		return nil, err
 	}
 	ans := gin.H{
 		"createAt":blog.CreateAt,
 		"updateAt":blog.UpdateAt,
-		"deleteAt":blog.DeleteAt,
 		"title": blog.Title,
 		"content":blog.Content,
 		"type": blog.Type,

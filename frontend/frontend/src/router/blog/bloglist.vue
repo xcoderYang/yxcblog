@@ -8,9 +8,9 @@
                 <li v-for="(blog,index) in lists" :key="index">
                     <span class="createTime">{{blog.createTime}}</span>
                     <span class="title" @click="toBlog(blog.blogId)">{{blog.title}}</span>
-                    <span class="tag">
-                        <span v-for="(tag,i) in blog.tags" :key="i" class="tagItem">
-                            {{tag}}
+                    <span class="label">
+                        <span v-for="(label,i) in blog.labels" :key="i" class="labelItem">
+                            {{label}}
                         </span>
                     </span>
                 </li>
@@ -21,37 +21,40 @@
 </template>
 <script>
 export default {
-    methods:{
-        toBlog: function(blogId){
-            console.log(blogId)
-            this.$router.push({name:"blog", params:{blogId}})
-        }
-    },
     data(){
         return {
-            lists: [{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "111",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "222",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "333",
-            },{
-                "createTime": "2020/11/11",
-                "title": "this is title this is title this is title this is title this is title this is title",
-                "tags": ["golang", "mysql", "分布式"],
-                "blogId": "444",
-            }]
+            lists: [{}]
         }
-    }
+    },
+    mounted(){
+        this.$axios.get(this.serverUrl + "/server/blog/list",{
+            params:{
+                pageNum:1
+            }
+        })
+        .then((res)=>{
+            this.data2Page(res.data.data)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    },
+    methods:{
+        toBlog: function(blogId){
+            this.$router.push({name:"blog", params:{blogId}})
+        },
+        data2Page(data){
+            let moment = this.$moment
+            this.lists = data.map((e)=>{
+                return {
+                    createTime: moment(e.createAt).format("YYYY/MM/DD"),
+                    title: e.title,
+                    labels: e.label.split('|'),
+                    blogId: e.blogId
+                }
+            })
+        }
+    },
 }
 </script>
 <style lang="stylus" scoped>
@@ -94,9 +97,9 @@ export default {
                     cursor pointer
                     &:hover
                         color #CD8500
-                .tag
+                .label
                     padding 0 20px
-                    .tagItem
+                    .labelItem
                         font-size 12px
                         margin 0 5px
                         padding 0 5px

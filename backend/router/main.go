@@ -8,10 +8,14 @@ import (
 var router *gin.Engine
 
 func LoadRouter(r *gin.Engine){
-	group := r.Group("/api")
-	user := group.Group("/user")
-	blog := group.Group("/blog")
+	backApi := r.Group("/api")
+	user := backApi.Group("/user")
+	blog := backApi.Group("/blog")
 	blog.Use(middleware.CheckLogin())
 	initUser(user)
 	initBlog(blog)
+
+	frontApi := r.Group("/server")
+	fblog := frontApi.Group("/blog")
+	initBlog(fblog)
 }
