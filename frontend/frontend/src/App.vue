@@ -1,6 +1,6 @@
 <template>
   <div id="wrap">
-    <Header></Header>
+    <Header :class="{hide:!headerShow}"></Header>
     <div id="app">
     <router-view></router-view>
   </div>
@@ -14,6 +14,32 @@ export default {
   name: 'App',
   components:{
     Header
+  },
+  data(){
+    return {
+      headerShow: true,
+      hideRouter:["blog"]
+    }
+  },
+  mounted(){
+    this.headerShow = this.$store.state.header.headerVision
+    console.log(this.headerShow)
+    console.log(this.$route.fullPath)
+    if(this.hideRouter.includes(this.$route.name)){
+      this.headerShow = false
+    }else{
+      this.headerShow = true
+    }
+  },
+  watch:{
+    "$route"(to){
+      console.log(to)
+      if(this.hideRouter.includes(to.name)){
+        this.headerShow = false
+      }else{
+        this.headerShow = true
+      }
+    }
   }
 }
 </script>
@@ -39,4 +65,6 @@ i
 div
   width 100%
   height 100%
+.hide
+  display none
 </style>

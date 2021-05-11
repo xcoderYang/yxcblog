@@ -1,21 +1,33 @@
 <template>
     <div class="blogWrap">
         <div class="container">
-            <section class="title" @click="test" v-html="article.title">
+            <section class="article">
+                <LEFTRECOMMEND class="leftRecommend"></LEFTRECOMMEND>
+                <RIGHTRECOMMEND class="rightRecommend"></RIGHTRECOMMEND>
+                <section class="title" @click="test" v-html="article.title">
+                </section>
+                <section class="label">
+                    <span v-for="(label,i) in article.labels" :key="i" class="labelItem">
+                        {{label}}
+                    </span>
+                </section>
+                <section class="content" v-html="article.content">
+                </section>
+                <section class="comment">
+                </section>
+                <el-backtop target=".article" :bottom="300" :right="200"></el-backtop>
             </section>
-            <section class="label">
-                <span v-for="(label,i) in article.labels" :key="i" class="labelItem">
-                    {{label}}
-                </span>
-            </section>
-            <section class="content" v-html="article.content">
-            </section>    
         </div>
     </div>
 </template>
 <script>
+import LEFTRECOMMEND from "../../components/left_recommend"
+import RIGHTRECOMMEND from "../../components/right_recommend"
 export default {
-    // props:['blogId'],
+    components:{
+        LEFTRECOMMEND,
+        RIGHTRECOMMEND,
+    },
     data(){
         return {
             article:{
@@ -38,6 +50,7 @@ export default {
             console.log("no")
             console.log(err)
         })
+        console.log(this.$store)
     },
     methods: {
         test(){
@@ -56,6 +69,9 @@ export default {
                 blogId: data.blogId,
                 lastUpdate: moment(data.updateAt).format("YYYY/MM/DD")
             }
+        },
+        goBack(){
+            
         }
     },
 }
@@ -68,24 +84,44 @@ export default {
         flex-direction column
         align-items center
         background-color #F5F7FA
-    .title
-        width 1000px
-        margin-top 20px
-        text-align center
-        box-sizing border-box
-        font-size 30px
-    .content
-        width 1000px
+    .article
+        width 100%
+        height auto
         overflow auto
-    .label
-        padding 0 20px
-        margin 10px 0
-        .labelItem
-            font-size 12px
-            margin 0 5px
-            padding 0 5px
-            background-color #FFDEAD
-            border-radius 5px
-        
+        padding-bottom 50px
+        .title
+            width 800px
+            text-align center
+            margin auto
+            box-sizing border-box
+            font-size 30px
+        .label
+            text-align center
+            padding-bottom 20px
+            .labelItem
+                font-size 12px
+                margin 0 5px
+                padding 0 5px
+                background-color #FFDEAD
+                border-radius 5px
+        .content
+            width 800px
+            margin auto
+        .leftRecommend
+            display none
+            position fixed
+            top 30%
+            left 200px
+            border 1px solid black
+        .rightRecommend
+            display none
+            position fixed
+            top 30%
+            right 200px
+            border 1px solid black
+        .scrollTop
+            position fixed
+            bottom 20%
+            right 10%
 
 </style>

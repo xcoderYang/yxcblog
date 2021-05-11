@@ -18,7 +18,7 @@ export default new VueRouter({
             component: Bloglist,
         },
         {
-            path: '/blog',
+            path: '/blog/:blogId',
             name: 'blog',
             component: Blog,
         },

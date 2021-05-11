@@ -17,8 +17,8 @@ func init(){
 		log.Println(err)
 		return
 	}
-	sqlDBPool.SetMaxOpenConns(200)
-	sqlDBPool.SetMaxIdleConns(100)
-	sqlDBPool.SetConnMaxLifetime(time.Hour)
+	sqlDBPool.SetMaxOpenConns(10)
+	sqlDBPool.SetMaxIdleConns(10)
+	sqlDBPool.SetConnMaxLifetime(time.Minute*3)
 	DB = sqlDBPool
 }
