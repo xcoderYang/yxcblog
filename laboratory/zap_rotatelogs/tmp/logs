@@ -1,0 +1,7 @@
+{"level":"\u001b[34mINFO\u001b[0m","message":"logger construction succeeded","foo":"bar"}
+{"level":"\u001b[34mINFO\u001b[0m","message":"logger construction succeeded","foo":"bar"}
+{"level":"\u001b[34mINFO\u001b[0m","message":"logger construction succeeded","foo":"bar"}
+{"level":"info","message":"logger construction succeeded","foo":"bar"}
+{"level":"INFO","message":"logger construction succeeded","foo":"bar"}
+{"level":"info","message":"logger construction succeeded","foo":"bar"}
+{"level":"info","message":"logger construction succeeded","foo":"bar"}
